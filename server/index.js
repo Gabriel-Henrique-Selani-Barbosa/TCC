@@ -12,11 +12,6 @@ const db = mysql.createConnection({
   database: "banco",
 });
 
-db.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-})
-
 app.use(express.json());
 app.use(cors());
 
