@@ -7,6 +7,7 @@ import Axios from "axios";
 function App() {
   const handleLogin = (values) => {
     Axios.post("http://localhost:3001/login", {
+      nome_empresa: values.nome_empresa,
       email: values.email,
       password: values.password,
     }).then((response) => {
@@ -60,6 +61,15 @@ function App() {
         validationSchema={validationsLogin}
       >
         <Form className="login-form">
+          <div className="login-form-group">
+            <Field name="nome_empresa" className="form-field" placeholder="Nome da Empresa" />
+
+            <ErrorMessage
+              component="span"
+              name="nome_empresa"
+              className="form-error"
+            />
+          </div>
           <div className="login-form-group">
             <Field name="email" className="form-field" placeholder="Email" />
 

@@ -5,12 +5,6 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "1574857",
-});
-
 
 app.use(express.json());
 app.use(cors());
@@ -19,7 +13,11 @@ app.post("/register", (req, res) => {
   const nome_empresa = req.body.nome_empresa;
   const email = req.body.email;
   const password = req.body.password;
-
+  const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "1574857",
+  });
   db.connect(function(err) {
     db.query(`CREATE DATABASE IF NOT EXISTS ${nome_empresa}`, function (err, result) {
       if (err) {
@@ -52,10 +50,16 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
+  const nome_empresa = req.body.nome_empresa;
   const email = req.body.email;
   const password = req.body.password;
-
-  db.query("SELECT * FROM usuarios WHERE email = ?", [email], (err, result) => {
+  const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "1574857",
+    database: `${nome_empresa}`,
+  });
+  db.query("SELECT * FROM users WHERE email = ?", [email], (err, result) => {
     if (err) {
       res.send(err);
     }
