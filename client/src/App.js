@@ -16,6 +16,7 @@ function App() {
 
   const handleRegister = (values) => {
     Axios.post("http://localhost:3001/register", {
+      nome_empresa: values.nome_empresa,
       email: values.email,
       password: values.password,
     }).then((response) => {
@@ -92,6 +93,16 @@ function App() {
         validationSchema={validationsRegister}
       >
         <Form className="register-form">
+          <div className="register-form-group">
+            <Field name="nome_empresa" className="form-field" placeholder="Nome da empresa" />
+
+            <ErrorMessage
+              component="span"
+              name="nome_empresa"
+              className="form-error"
+            />
+          </div>
+
           <div className="register-form-group">
             <Field name="email" className="form-field" placeholder="Email" />
 
