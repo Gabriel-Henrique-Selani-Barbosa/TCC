@@ -80,6 +80,92 @@ app.post("/login", (req, res) => {
   });
 });
 
+app.post("/registrar-equipamento", (req, res) => {
+  const nome_empresa = req.body.nome_empresa;
+  const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "1574857",
+    database: `${nome_empresa}`,
+  });
+  const cliente = req.body.nome_cliente;
+  const condominio = req.body.condominio;
+  const terreno = req.body.terreno;
+  const metragem = req.body.metragem;
+  const razao = req.body.razaosocial;
+  const datade = req.body.datade;
+  const para = req.body.para;
+  const ndocumento = req.body.ndocumento;
+  const valor = req.body.valor;
+  const envioboleto = req.body.envioboleto;
+  const centrodecusto = req.body.centrodecusto;
+  const observacao = req.body.obersao;
+  db.query("INSERT INTO equipamentos (cliente, condominio, terreno, metragem, razao, datade, para, numerodocumento, valor, envioboleto, centrodecusto, observacao) VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+  [cliente, condominio, terreno, metragem, razao, datade, para, ndocumento, valor, envioboleto, centrodecusto, observacao],)
+});
+
+app.post("/registar-maodeobra", (req, res) => {
+  const nome_empresa = req.body.nome_empresa;
+  const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "1574857",
+    database: `${nome_empresa}`,
+  });
+  const cliente = req.body.nome_cliente;
+  const condominio = req.body.condominio;
+  const terreno = req.body.terreno;
+  const data = req.body.data;
+  const medicao = req.body.medicao;
+  const servico = req.body.servico
+  const total = req.body.total;
+  db.query("INSERT INTO maodeobra (cliente, condominio, terreno, data, medicao, servico, total) VALUE (?, ?, ?, ?, ?, ?, ?)", [cliente, condominio, terreno, data, medicao, servico, total])
+})
+
+app.post("registrar-obra", (req, res) => {
+  const nome_empresa = req.body.nome_empresa;
+  const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "1574857",
+    database: `${nome_empresa}`,
+  });
+  const nomeobra = req.body.nomeobra
+  const cliente = req.body.nome_cliente
+  const situacao = req.body.situacao
+  const categoria = req.body.categoria
+  db.query("INSERT INTO obra (nomeobra, cliente, situacao, categoria) VALUE (?, ?, ?, ?)", [nomeobra, cliente, situacao, categoria])
+})
+
+app.post("registrar-fornecedor", (req, res) => {
+  const nome_empresa = req.body.nome_empresa;
+  const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "1574857",
+    database: `${nome_empresa}`,
+  });
+})
+
+app.post("registrar-cliente", (req, res) => {
+  const nome_empresa = req.body.nome_empresa;
+  const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "1574857",
+    database: `${nome_empresa}`,
+  });
+})
+
+app.post("registrar-fornecedor", (req, res) => {
+  const nome_empresa = req.body.nome_empresa;
+  const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "1574857",
+    database: `${nome_empresa}`,
+  });
+})
 app.listen(3001, () => {
   console.log("rodando na porta 3001");
 });
