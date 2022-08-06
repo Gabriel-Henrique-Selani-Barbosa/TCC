@@ -10,8 +10,8 @@ app.use(express.json());
 app.use(cors());
 
 app.post("/register", (req, res) => {
-  const nome_empresa = req.body.nome_empresa;
-  const email = req.body.email;
+  const nome_empresa = req.body.storeName;
+  const email = req.body.username;
   const password = req.body.password;
   const db = mysql.createConnection({
     host: "localhost",
@@ -40,6 +40,7 @@ app.post("/register", (req, res) => {
               [email, hash, "admin"],
               )
             })
+            res.send("Usuario cadastrado com sucesso")
           }else {
             res.send("Ja existe um administrador cadastrado para essa empresa, se deseja criar um novo logue com a conta de administrador e no painel crie um novo usuario e de a ele o nivel de administrador")
           }
@@ -50,8 +51,8 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  const nome_empresa = req.body.nome_empresa;
-  const email = req.body.email;
+  const nome_empresa = req.body.storeName;
+  const email = req.body.username;
   const password = req.body.password;
   const db = mysql.createConnection({
     host: "localhost",
