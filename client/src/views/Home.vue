@@ -10,9 +10,16 @@ import Clientes from '@/components/Clientes/Clientes'
 
 export default {
   name: 'Home',
+  props: {
+    store: String,
+    user: String
+  },  
   components: {
    Sidebar,
    Clientes
+  },
+  created() {
+    console.log(this.store, this.user)
   },
 }
 </script>

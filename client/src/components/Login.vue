@@ -64,7 +64,7 @@ export default {
             password: this.password
         })
         .then(res => {
-
+            this.$router.push({name:'home', params: {store: this.storeName, user: this.username}})
         })
         .catch(err => {
           alert(err);
