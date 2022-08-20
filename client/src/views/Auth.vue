@@ -1,15 +1,15 @@
 <template>
-  <div class="login">
-    <login></login>
+  <div class="auth">
+    <auth></auth>
   </div>
 </template>
 
 <script>
-import login from '@/components/Login.vue'
+import auth from '@/components/Auth.vue'
 export default {
   name: 'LoginForm',
   components: {
-   login,
+   auth,
   },
 }
 </script>
