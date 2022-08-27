@@ -1,35 +1,38 @@
 <template>
-    <div class="auth-wrapper">
-        <div class="auth-wrapper__left">
-            <img height="100" src="@/assets/img/freepik-free-logo.jpg">
-        </div>
-        <form class="auth-wrapper__right" @submit.prevent>
-            <h2 v-if="screen == 'login'" class="h2">Login</h2>
-            <h2 v-if="screen == 'register'" class="h2">Cadastre-se</h2>
-            <div class="form-group">
-                <input type="text" id="storeName" placeholder="Nome da Loja" v-model="storeName">
-                <label for="storeName">Nome da Loja</label>    
-            </div>
-            <div class="form-group">
-                <input type="text" id="username" placeholder="Usuario" v-model="username">
-                <label for="username">Usuario</label>    
-            </div>
-            <div class="form-group">
-                <input type="password" id="Password" placeholder="Senha" v-model="password">
-                <label for="Password">Senha</label>    
-            </div>
-            <div  v-if="screen == 'login'" class="checkbox-container">
-                <input type="checkbox" v-model="rememberMe">
-                <span  class="text-checkbox">Lembra usuario?</span>
-            </div> 
-            <div class="button-area">
-                <button v-if="screen == 'login'" class="btn btn-primary pull-right" @click="login()" >Login</button>
-                <button v-if="screen == 'register'" class="btn btn-primary pull-right" @click="register()" >Cadastrar</button>
-                <a v-if="screen == 'register'" @click="screen = 'login'">Ja possui conta?</a>
-                <a v-if="screen == 'login'" @click="screen = 'register'">Ainda nao possui conta?</a>
-            </div>
-        </form>
-    </div>
+    <div class="container">
+      <div class="blueBg">
+          <div class="box signin">
+              <h2>Já tem uma conta ?</h2>
+              <button class="signinBtn" @click="goToRegister(false)">Entrar</button>
+          </div>
+          <div class="box signup">
+              <h2>Não possui conta ?</h2>
+              <button class="signupBtn" @click="goToRegister(true)">Cadastrar-se</button>
+          </div>
+      </div>
+      <div class="formBx" :class="{active: screen}">
+          <div class="form signinForm">
+              <form @submit.prevent>
+                  <h3>Entrar</h3>
+                  <input type="text" placeholder="Sua loja" v-model="storeName">
+                  <input type="text" placeholder="Seu nome" v-model="username">
+                  <input type="password" placeholder="Sua senha" v-model="password">
+                  <input type="submit" value="Login" @click="login()">
+                  <a href="#" class="forgot">Esqueci minha senha</a>
+              </form>
+          </div>
+          <div class="form signupForm">
+              <form @submit.prevent>
+                  <h3>Cadastrar-se</h3>
+                  <input type="text" placeholder="Sua loja" v-model="storeName">
+                  <input type="text" placeholder="Seu nome" v-model="username">
+                  <input type="password" placeholder="Sua senha" v-model="password">
+                  <input type="password" placeholder="Confirmar senha">
+                  <input type="submit" value="Cadastrar-se" @click="register()">
+              </form>
+          </div>
+      </div>
+  </div>
 </template>
 
 <script>
@@ -42,19 +45,15 @@ export default {
       username: "",
       password: "",
       storeName: "",
-      screen: "login"
+      screen: false,
     };
-  },
-  beforeMount() {
-    let init = 1000;
-    setTimeout(function() {
-      document.querySelector(".login-wrapper").classList.toggle("open");
-      init = 300;
-    }, init);
   },
   methods: { 
     isRememberMe() {
       return this.rememberMe === true;
+    },
+    goToRegister(bool) {
+      this.screen = bool
     },
     login() {
       axios
