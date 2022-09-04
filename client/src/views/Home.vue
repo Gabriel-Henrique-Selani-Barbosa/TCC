@@ -1,12 +1,10 @@
 <template>
 		<Sidebar />
-    <Clientes />
 		<router-view />
 </template>
 
 <script>
 import Sidebar from '@/components/Menu/Sidebar.vue'
-import Clientes from '@/components/Clientes/Clientes'
 
 export default {
   name: 'Home',
@@ -16,10 +14,10 @@ export default {
   },  
   components: {
    Sidebar,
-   Clientes
   },
   created() {
-    console.log(this.store, this.user)
+    localStorage.setItem('store', this.store)
+    localStorage.setItem('user', this.user)
   },
 }
 </script>

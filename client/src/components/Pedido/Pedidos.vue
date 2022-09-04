@@ -30,111 +30,89 @@
 <AddUser v-if="newuser === true"></AddUser>
   <div id="user-table">
     <header>
-        <h3>Lista de Clientes</h3>
-        <button @click="newuser = true">Adicionar Cliente</button>
+        <h3>Lista de Pedidos</h3>
+        <button @click="newuser = true">Adicionar Pedidos</button>
     </header>
-    <table v-if="clientes.length !== 0" class="table">
+    <table v-if="pedidos.length !== 0" class="table">
       <thead>
         <tr>
           <th>Id</th>
-          <th>Nome</th>
-          <th>Cpf/Cnpj</th>
-          <th>Estado</th>
-          <th>Cidade</th>
-          <th>Endereco</th>
-          <th>Numero</th>
+          <th>Servico</th>
+          <th>Valor</th>
+          <th>Data do Pedido</th>
+          <th>Observacao</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="cliente in clientes" :key="cliente.client_id">
-          <td v-if="updateId === cliente.client_id">
+        <tr v-for="pedido in pedidos" :key="pedido.pedido_id">
+          <td v-if="updateId === pedido.pedido_id">
             <input
               type="text"
-              v-model="cliente.client_id"
+              v-model="pedido.pedido_id"
               class="form-control"
               id="id"
             />
           </td>
-          <td v-else>{{ cliente.client_id }}</td>
+          <td v-else>{{ pedido.pedido_id }}</td>
 
-          <td v-if="updateId === cliente.client_id">
+          <td v-if="updateId === pedido.pedido_id">
             <input
               type="text"
-              v-model="cliente.nome"
+              v-model="pedido.servico"
               class="form-control"
-              id="nome"
+              id="servico"
             />
           </td>
-          <td v-else>{{ cliente.nome }}</td>
+          <td v-else>{{ pedido.servico }}</td>
 
-          <td v-if="updateId === cliente.client_id">
+          <td v-if="updateId === pedido.pedido_id">
             <input
               type="text"
-              v-model="cliente.cpf_cnpj"
+              v-model="pedido.valor"
               class="form-control"
-              id="cpf_cnpj"
+              id="valor"
             />
           </td>
-          <td v-else>{{ cliente.cpf_cnpj }}</td>
+          <td v-else>{{ pedido.valor }}</td>
 
-          <td v-if="updateId === cliente.client_id">
+          <td v-if="updateId === pedido.pedido_id">
             <input
               type="text"
-              v-model="cliente.estado"
+              v-model="pedido.data_pedido"
               class="form-control"
-              id="estado"
+              id="data_pedido"
             />
           </td>
-          <td v-else>{{ cliente.estado }}</td>
+          <td v-else>{{ pedido.data_pedido }}</td>
 
-          <td v-if="updateId === cliente.client_id">
+            <td v-if="updateId === pedido.pedido_id">
             <input
               type="text"
-              v-model="cliente.cidade"
+              v-model="pedido.observação"
               class="form-control"
-              id="cidade"
+              id="observação"
             />
           </td>
-          <td v-else>{{ cliente.cidade }}</td>
+          <td v-else>{{ pedido.observação }}</td>
 
-        <td v-if="updateId === cliente.client_id">
-            <input
-              type="text"
-              v-model="cliente.endereco"
-              class="form-control"
-              id="endereco"
-            />
-          </td>
-          <td v-else>{{ cliente.endereco }}</td>
-
-        <td v-if="updateId === cliente.client_id">
-            <input
-              type="text"
-              v-model="cliente.num"
-              class="form-control"
-              id="numero"
-            />
-          </td>
-          <td v-else>{{ cliente.num }}</td>
-
-          <td v-if="updateId !== cliente.client_id">
+          <td v-if="updateId !== pedido.pedido_id">
             <button
               class="btn btn-sm btn-primary"
-              @click="handleUpdate(cliente)"
+              @click="handleUpdate(pedido)"
             >
               Update
             </button>
             &nbsp;
             <button
               class="btn btn-sm btn-danger"
-              @click="handleDelete(cliente.client_id)"
+              @click="handleDelete(pedido.pedido_id)"
             >
               Delete
             </button>
           </td>
 
           <td v-else>
-            <button class="btn btn-sm btn-primary" @click="handleSave(cliente.client_id)">
+            <button class="btn btn-sm btn-primary" @click="handleSave(cliente.pedido_id)">
               Save
             </button>
             &nbsp;
@@ -150,7 +128,7 @@
 
 <script>
 import axios from "axios";
-import AddUser from "./AddUser";
+import AddUser from "./Addpedidos";
 export default {
   name: "table-list-row",  
   components: {
@@ -162,7 +140,7 @@ export default {
   data: function () {
     return {
         updateId: null,
-        clientes: [],
+        pedidos: [],
         storeName: localStorage.getItem('store'),
         newuser: false,
     };
@@ -170,23 +148,23 @@ export default {
   methods: {
     getTableList: function () {
       axios
-        .get("http://localhost:3001/get-clientes/", {
+        .get("http://localhost:3001/get-pedidos/", {
             params: {
                 storeName: this.storeName
             }
         })
         .then((res) => {
-            this.clientes = res.data;
+            this.pedidos = res.data;
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    handleDelete(cliente_id) {
+    handleDelete(pedido_id) {
       axios
-        .post("http://localhost:3001/delete-clientes", {
+        .post("http://localhost:3001/delete-pedidos/", {
             storeName: this.storeName,
-            cliente_id: cliente_id
+            pedido_id: pedido_id
         })
         .then((res) => {
             alert(res)

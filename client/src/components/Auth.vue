@@ -62,10 +62,10 @@ export default {
             username: this.username,
             password: this.password
         })
-        .then(res => {
+        .then((res) => {
             this.$router.push({name:'home', params: {store: this.storeName, user: this.username}})
         })
-        .catch(err => {
+        .catch((err) => {
           alert(err);
         });
     },
@@ -76,12 +76,12 @@ export default {
             username: this.username,
             password: this.password
         })
-        .then(res => {
+        .then((res) => {
             if (res.data == "Usuario cadastrado com sucesso") {
                 alert('go porra')
             }
         })
-        .catch(err => {
+        .catch((err) => {
           alert(err);
         });
     }

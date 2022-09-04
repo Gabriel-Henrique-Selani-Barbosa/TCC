@@ -30,111 +30,78 @@
 <AddUser v-if="newuser === true"></AddUser>
   <div id="user-table">
     <header>
-        <h3>Lista de Clientes</h3>
-        <button @click="newuser = true">Adicionar Cliente</button>
+        <h3>Lista de Fornecedores</h3>
+        <button @click="newuser = true">Adicionar Fornecedor</button>
     </header>
-    <table v-if="clientes.length !== 0" class="table">
+    <table v-if="fornecedores.length !== 0" class="table">
       <thead>
         <tr>
           <th>Id</th>
           <th>Nome</th>
           <th>Cpf/Cnpj</th>
-          <th>Estado</th>
-          <th>Cidade</th>
-          <th>Endereco</th>
-          <th>Numero</th>
+          <th>Produto</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="cliente in clientes" :key="cliente.client_id">
-          <td v-if="updateId === cliente.client_id">
+        <tr v-for="fornecedor in fornecedores" :key="fornecedor.id_fornecedor">
+          <td v-if="updateId === fornecedor.id_fornecedor">
             <input
               type="text"
-              v-model="cliente.client_id"
+              v-model="fornecedor.id_fornecedor"
               class="form-control"
               id="id"
             />
           </td>
-          <td v-else>{{ cliente.client_id }}</td>
+          <td v-else>{{ fornecedor.id_fornecedor }}</td>
 
-          <td v-if="updateId === cliente.client_id">
+          <td v-if="updateId === fornecedor.id_fornecedor">
             <input
               type="text"
-              v-model="cliente.nome"
+              v-model="fornecedor.nome"
               class="form-control"
               id="nome"
             />
           </td>
-          <td v-else>{{ cliente.nome }}</td>
+          <td v-else>{{ fornecedor.nome }}</td>
 
-          <td v-if="updateId === cliente.client_id">
+          <td v-if="updateId === fornecedor.id_fornecedor">
             <input
               type="text"
-              v-model="cliente.cpf_cnpj"
+              v-model="fornecedor.cpf_cnpj"
               class="form-control"
               id="cpf_cnpj"
             />
           </td>
-          <td v-else>{{ cliente.cpf_cnpj }}</td>
+          <td v-else>{{ fornecedor.cpf_cnpj }}</td>
 
-          <td v-if="updateId === cliente.client_id">
+          <td v-if="updateId === fornecedor.id_fornecedor">
             <input
               type="text"
-              v-model="cliente.estado"
+              v-model="fornecedor.produto"
               class="form-control"
-              id="estado"
+              id="produto"
             />
           </td>
-          <td v-else>{{ cliente.estado }}</td>
+          <td v-else>{{ fornecedor.produto }}</td>
 
-          <td v-if="updateId === cliente.client_id">
-            <input
-              type="text"
-              v-model="cliente.cidade"
-              class="form-control"
-              id="cidade"
-            />
-          </td>
-          <td v-else>{{ cliente.cidade }}</td>
-
-        <td v-if="updateId === cliente.client_id">
-            <input
-              type="text"
-              v-model="cliente.endereco"
-              class="form-control"
-              id="endereco"
-            />
-          </td>
-          <td v-else>{{ cliente.endereco }}</td>
-
-        <td v-if="updateId === cliente.client_id">
-            <input
-              type="text"
-              v-model="cliente.num"
-              class="form-control"
-              id="numero"
-            />
-          </td>
-          <td v-else>{{ cliente.num }}</td>
-
-          <td v-if="updateId !== cliente.client_id">
+          <td v-if="updateId !== fornecedor.id_fornecedor">
             <button
               class="btn btn-sm btn-primary"
-              @click="handleUpdate(cliente)"
+              @click="handleUpdate(fornecedor)"
             >
               Update
             </button>
             &nbsp;
             <button
               class="btn btn-sm btn-danger"
-              @click="handleDelete(cliente.client_id)"
+              @click="handleDelete(fornecedor.id_fornecedor)"
             >
               Delete
             </button>
           </td>
 
           <td v-else>
-            <button class="btn btn-sm btn-primary" @click="handleSave(cliente.client_id)">
+            <button class="btn btn-sm btn-primary" @click="handleSave(cliente.id_fornecedor)">
               Save
             </button>
             &nbsp;
@@ -150,7 +117,7 @@
 
 <script>
 import axios from "axios";
-import AddUser from "./AddUser";
+import AddUser from "./AddFornecedor";
 export default {
   name: "table-list-row",  
   components: {
@@ -162,7 +129,7 @@ export default {
   data: function () {
     return {
         updateId: null,
-        clientes: [],
+        fornecedores: [],
         storeName: localStorage.getItem('store'),
         newuser: false,
     };
@@ -170,23 +137,23 @@ export default {
   methods: {
     getTableList: function () {
       axios
-        .get("http://localhost:3001/get-clientes/", {
+        .get("http://localhost:3001/get-fornecedores/", {
             params: {
                 storeName: this.storeName
             }
         })
         .then((res) => {
-            this.clientes = res.data;
+            this.fornecedores = res.data;
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    handleDelete(cliente_id) {
+    handleDelete(id_fornecedor) {
       axios
-        .post("http://localhost:3001/delete-clientes", {
+        .post("http://localhost:3001/delete-fornecedores", {
             storeName: this.storeName,
-            cliente_id: cliente_id
+            id_fornecedor: id_fornecedor
         })
         .then((res) => {
             alert(res)

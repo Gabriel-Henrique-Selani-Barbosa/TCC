@@ -1,19 +1,19 @@
 <template>
 		<Sidebar />
 		<router-view />
-        <Clientes />
+        <Equipamentos />
 </template>
 
 <script>
 import Sidebar from '@/components/Menu/Sidebar.vue'
-import Clientes from '@/components/Clientes/Clientes.vue'
+import Equipamentos from '@/components/Equipamento/Equipamentos.vue';
 
 export default {
   name: 'ClientesList',
   components: {
     Sidebar,
-    Clientes
-  },
+    Equipamentos
+},
 }
 </script>
 

@@ -20,13 +20,17 @@
 				<span class="material-symbols-outlined">groups</span>
 				<span class="text">Clientes</span>
 			</router-link>
-			<router-link to="/contact" class="button">
+			<router-link to="/fornecedores" class="button">
 				<span class="material-symbols-outlined">email</span>
-				<span class="text">Contact</span>
+				<span class="text">Fornecedores</span>
 			</router-link>
-            <router-link to="/settings" class="button">
+            <router-link to="/Equipamentos" class="button">
 				<span class="material-symbols-outlined">settings</span>
-				<span class="text">Settings</span>
+				<span class="text">Equipamentos</span>
+			</router-link>
+			<router-link to="/Pedidos" class="button">
+				<span class="material-symbols-outlined">settings</span>
+				<span class="text">Pedidos</span>
 			</router-link>
 		</div>
 	</aside>
