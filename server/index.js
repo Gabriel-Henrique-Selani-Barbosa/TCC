@@ -2,8 +2,7 @@ const express = require("express");
 const app = express();
 const mysql = require("mysql");
 const cors = require("cors");
-const bcrypt = require("bcrypt");
-const saltRounds = 10;
+const Client = require("pg").Client
 
 
 app.use(express.json());
@@ -13,76 +12,95 @@ app.post("/register", (req, res) => {
   const nome_empresa = req.body.storeName;
   const email = req.body.username;
   const password = req.body.password;
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  })
+  const createDatabase = async () => {
+    try {
+      await db.connect();
+      await db.query(`CREATE SCHEMA ${nome_empresa}`);
+      return true;
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+        await db.end();
+    }
+  }
+  createDatabase().then((result) => {
+    if (result) {
+        console.log('Database created batata');
+    }
   });
-  db.connect(function(err) {
-    db.query(`CREATE DATABASE IF NOT EXISTS ${nome_empresa}`, function (err, result) {
-      if (err) {
-        res.send(err);
-      }
-      const actual_schema = mysql.createConnection({
-        host: "localhost",
-        user: "root",
-        password: "1574857",
-        database: `${nome_empresa}`
-      });
-      actual_schema.query("CREATE TABLE users (user_id INT AUTO_INCREMENT PRIMARY KEY, email VARCHAR(50) NOT NULL, password VARCHAR(255) NOT NULL, user_nivel VARCHAR(6) NOT NULL)", function (err, result){
-        actual_schema.query("SELECT * FROM users WHERE user_nivel = ?", ["admin"], function (err, result){
-          if (err) {
-            res.send(err);
-          }
-          if (result.length == 0) {
-            bcrypt.hash(password, saltRounds, (err, hash) => {
-              actual_schema.query("INSERT INTO users (email, password, user_nivel) VALUE (?, ?, ?)",
-              [email, hash, "admin"],
-              )
-            })
-            res.send("Usuario cadastrado com sucesso")
-          }else {
-            res.send("Ja existe um administrador cadastrado para essa empresa, se deseja criar um novo logue com a conta de administrador e no painel crie um novo usuario e de a ele o nivel de administrador")
-          }
-        })
-      })
-      actual_schema.query("CREATE TABLE tb_client (client_id INT AUTO_INCREMENT PRIMARY KEY, cpf_cnpj VARCHAR(50) NOT NULL, nome VARCHAR(50), endereco VARCHAR(50), num INT, cidade VARCHAR (50), estado VARCHAR(50))")
-      actual_schema.query("CREATE TABLE tb_fornecedor (id_fornecedor INT AUTO_INCREMENT PRIMARY KEY, cpf_cnpj VARCHAR(50) NOT NULL, nome VARCHAR(50), produto VARCHAR(50))")
-      actual_schema.query(`CREATE TABLE tb_equip (equip_id INT AUTO_INCREMENT PRIMARY KEY, CONSTRAINT id_fornecedor FOREIGN KEY(equip_id) REFERENCES ${nome_empresa}.tb_fornecedor (id_fornecedor), categoria VARCHAR(50) NOT NULL, marca VARCHAR(50), modelo VARCHAR(50), preco INT)`)
-      actual_schema.query("CREATE TABLE tb_pedido (pedido_id INT AUTO_INCREMENT PRIMARY KEY, servico VARCHAR(50), valor INT, data_pedido DATE, observação VARCHAR (50))")
-    });
-  }) 
+
+  const actual_schema = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  })
+  const createSchema = async () => {
+    try {
+      await actual_schema.connect();
+      await actual_schema.query(`CREATE TABLE ${nome_empresa}.usuarios (usuario_id SERIAL PRIMARY KEY, email VARCHAR(50) NOT NULL, senha VARCHAR(255) NOT NULL, user_nivel VARCHAR(6) NOT NULL)`);
+      await actual_schema.query(`INSERT INTO ${nome_empresa}.usuarios (email, senha, user_nivel) VALUES($1, $2, $3)`, [email, password, "admin"]);
+      await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_client (client_id SERIAL PRIMARY KEY, cpf_cnpj VARCHAR(50) NOT NULL, nome VARCHAR(50), endereco VARCHAR(50), num INTEGER, cidade VARCHAR (50), estado VARCHAR(50))`);
+      await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_fornecedor (id_fornecedor SERIAL PRIMARY KEY, cpf_cnpj VARCHAR(50) NOT NULL, nome VARCHAR(50), produto VARCHAR(50))`);
+      await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_equip (equip_id SERIAL PRIMARY KEY, CONSTRAINT id_fornecedor FOREIGN KEY(equip_id) REFERENCES ${nome_empresa}.tb_fornecedor (id_fornecedor), categoria VARCHAR(50) NOT NULL, marca VARCHAR(50), modelo VARCHAR(50), preco INTEGER)`);
+      await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_pedido (pedido_id SERIAL PRIMARY KEY, servico VARCHAR(50), valor INT, data_pedido DATE, observação VARCHAR (50))`);
+      return true;
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await actual_schema.end();
+    }
+  }
+  createSchema().then((result) => {
+    if (result) {
+        console.log('bora');
+    }
+  });
 });
 
 app.post("/login", (req, res) => {
   const nome_empresa = req.body.storeName;
   const email = req.body.username;
   const password = req.body.password;
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
-  });
-  db.query("SELECT * FROM users WHERE email = ?", [email], (err, result) => {
-    if (err) {
-      res.send(err);
-    }
-    if (result.length > 0) {
-      bcrypt.compare(password, result[0].password, (error, response) => {
-        if (error) {
-          res.send(error);
-        }
-        if (response) {
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  })
+  const login = async () => {
+    try {
+      await db.connect();
+      const result = await db.query(`SELECT * FROM ${nome_empresa}.usuarios WHERE email in ($1)`, [email])
+        if (password == result.rows[0].senha) {
           res.send({ msg: "Usuário logado" });
-        } else {
-          res.send({ msg: "Senha incorreta" });
+        }else {
+          res.send({ msg: "Email ou senha incorretos" });
         }
-      });
-    } else {
-      res.send({ msg: "Usuário não registrado!" });
+      return true
+    }catch (error) {
+      console.error(error.stack);
+      return false;
+    }finally {
+      await db.end()
     }
-  });
+  }
+  login().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
 });
 
 app.post("/registrar-equipamento", (req, res) => {
@@ -211,6 +229,29 @@ app.get("/get-equipamentos", (req, res) => {
     }
   });
 });
+
+app.post("/update-equipamentos", (req, res) => {
+  const nome_empresa = req.body.storeName;
+  const id_equip = req.body.equipamentoId
+  const equipamentoCategoria = req.body.equipamentoCategoria
+  const equipamentoMarca = req.body.equipamentoMarca
+  const equipamentoModelo = req.body.equipamentoModelo
+  const equipamentoPreco = req.body.equipamentoPreco
+  const db = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "1574857",
+    database: `${nome_empresa}`,
+  });
+  db.query("UPDATE tb_equip SET categoria =?, marca = ?, modelo = ?, preco= ? WHERE equip_id = ? ", [equipamentoCategoria, equipamentoMarca, equipamentoModelo, equipamentoPreco, id_equip], (err, result) => {
+    if(err) {
+      res.send(err)
+    }
+    if(result) {
+      res.send("Cliente fornecedor com sucesso")
+    }
+  })
+})
 
 app.post("/delete-equipamentos", (req, res) => {
   const nome_empresa = req.body.storeName;
