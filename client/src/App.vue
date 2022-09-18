@@ -6,6 +6,17 @@
 .material-symbols-outlined {
   font-weight: 300;
 }
+html[data-theme="light"] {
+     --background: #f8f9fa;
+     --border: #000;
+     --menuheader: #fff;
+}
+
+html[data-theme="dark"] {
+    --background: #000;
+    --border: #999;
+    --menuheader: #ccc;
+}
 :root {
 	--primary: #3b0266;
 	--primary-alt: #22c55e;

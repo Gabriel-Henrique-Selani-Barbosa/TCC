@@ -45,22 +45,15 @@
       </thead>
       <tbody>
         <tr v-for="equipamento in equipamentos" :key="equipamento.equip_id">
-          <td v-if="updateId === equipamento.equip_id">
-            <input
-              type="text"
-              v-model="equipamento.equip_id"
-              class="form-control"
-              id="id"
-            />
-          </td>
-          <td v-else>{{ equipamento.equip_id }}</td>
+          <td>{{ equipamento.equip_id }}</td>
 
           <td v-if="updateId === equipamento.equip_id">
             <input
               type="text"
-              v-model="equipamento.categoria"
+              v-model="equipamentoCategoria"
               class="form-control"
               id="categoria"
+              @value="equipamento.categoria"
             />
           </td>
           <td v-else>{{ equipamento.categoria }}</td>
@@ -68,9 +61,10 @@
           <td v-if="updateId === equipamento.equip_id">
             <input
               type="text"
-              v-model="equipamento.marca"
+              v-model="equipamentoMarca"
               class="form-control"
               id="marca"
+              @value="equipamento.marca"
             />
           </td>
           <td v-else>{{ equipamento.marca }}</td>
@@ -78,9 +72,10 @@
           <td v-if="updateId === equipamento.equip_id">
             <input
               type="text"
-              v-model="equipamento.modelo"
+              v-model="equipamentoModelo"
               class="form-control"
               id="modelo"
+              @value="equipamento.modelo"
             />
           </td>
           <td v-else>{{ equipamento.modelo }}</td>
@@ -88,9 +83,10 @@
         <td v-if="updateId === equipamento.equip_id">
             <input
               type="text"
-              v-model="equipamento.preco"
+              v-model="equipamentoPreco"
               class="form-control"
               id="preco"
+              @value="equipamento.preco"
             />
           </td>
           <td v-else>{{ equipamento.preco }}</td>
@@ -98,7 +94,7 @@
           <td v-if="updateId !== equipamento.equip_id">
             <button
               class="btn btn-sm btn-primary"
-              @click="handleUpdate(equipamento)"
+              @click="handleUpdate(equipamento.equip_id)"
             >
               Update
             </button>
@@ -112,7 +108,7 @@
           </td>
 
           <td v-else>
-            <button class="btn btn-sm btn-primary" @click="handleSave(cliente.equip_id)">
+            <button class="btn btn-sm btn-primary" @click="handleSave(equipamento.equip_id)">
               Save
             </button>
             &nbsp;
@@ -143,6 +139,10 @@ export default {
         equipamentos: [],
         storeName: localStorage.getItem('store'),
         newuser: false,
+        equipamentoCategoria: "",
+        equipamentoMarca: "",
+        equipamentoModelo: "",
+        equipamentoPreco: "",
     };
   },
   methods: {
@@ -173,12 +173,25 @@ export default {
           console.log(error);
         });
     },
-    handleUpdate(product) {
-      this.updateId = product.id;
+    handleUpdate(id) {
+      this.updateId = id;
     },
-    handleSave(product) {
-      this.$emit("update:product", product);
-      this.updateId = null;
+    handleSave(id) {
+      axios
+        .post("http://localhost:3001/update-equipamentos", {
+          storeName: this.storeName,
+          equipamentoId: id,
+          equipamentoCategoria: this.equipamentoCategoria,
+          equipamentoMarca: this.equipamentoMarca,
+          equipamentoModelo: this.equipamentoModelo,
+          equipamentoPreco: this.equipamentoPreco,
+        })
+        .then((res) => {
+          alert(res)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     },
   },
 };

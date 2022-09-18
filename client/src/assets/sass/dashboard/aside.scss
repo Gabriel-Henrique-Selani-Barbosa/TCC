@@ -1,13 +1,35 @@
+.menu {
+	width: 100vw;
+	&-header {
+		height: 61px;
+		width: 100%;
+		background: var(--menuheader);
+		border-bottom: 1px solid var(--border);
+		display: flex;
+		align-items: center;
+		justify-content: left;
+		button {
+			margin-left: 15px;
+		}
+	}
+
+}
+
 aside {
 	display: flex;
 	flex-direction: column;
 	color: var(--light);
-	width: calc(2rem + 32px);
+	width: 260px;
 	overflow: hidden;
 	padding: 1rem;
-
-	transition: 0.2s ease-in-out;
-
+	position: fixed;
+	top: 0;
+	height: 100vh;
+	left: 0;
+	z-index: 99;
+	transition: 0.5s ease-in-out;
+	transform: translateX(-260px);
+	background: #222;
 	.logo {
 		margin-bottom: 1rem;
 
@@ -52,7 +74,7 @@ aside {
 	}
 
 	h3, .button .text {
-		opacity: 0;
+		opacity: 1;
 		transition: opacity 0.3s ease-in-out;
 	}
 
@@ -63,8 +85,7 @@ aside {
 		text-transform: uppercase;
 	}
 
-	.menu {
-		margin: 0 -1rem;
+	.menu__list {
         display: flex;
         flex-direction: column;
         row-gap: 5px;
@@ -97,39 +118,12 @@ aside {
 			}
 
 			&.router-link-exact-active {
-				background-color: var(--white);
-				border-radius: 50px 0 0 50px;
+				background: hsla(0,0%,100%,.23);
                 position: relative;
-                &:before {
-                    content: "";
-                    width: 45px;
-                    height: 45px;
-                    transform: rotate(90deg) scale(1.04);
-                    background-size: 100%;
-                    background-image: url(@/assets/radius-bottom.svg);
-                    position: absolute;
-                    top: -45px;
-                    right: 0px;
-                }
-                &:after {
-                    content: "";
-                    width: 45px;
-                    height: 45px;
-                    transform: scale(1.04);
-                    background-size: 100%;
-                    background-image: url(@/assets/radius-bottom.svg);
-                    position: absolute;
-                    top: 100%;
-                    right: 0px;
-                }
 
-				.material-symbols-outlined, .text {
-					color: var(--primary);
+				.text {
+					color: #fff;
 				}
-
-                .text {
-                    font-weight: 600;
-                }
 			}
 		}
 	}
@@ -168,10 +162,5 @@ aside {
 		.footer {
 			opacity: 0;
 		}
-	}
-
-	@media (max-width: 1024px) {
-		position: absolute;
-		z-index: 99;
 	}
 }

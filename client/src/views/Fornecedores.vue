@@ -1,7 +1,9 @@
 <template>
 		<Sidebar />
 		<router-view />
+    <div class="content">
         <Fornecedores />
+    </div>
 </template>
 
 <script>

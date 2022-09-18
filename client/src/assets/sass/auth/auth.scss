@@ -20,9 +20,12 @@ body.active {
 
 .container {
     position: relative;
-    width: 800px;
+    width: 100%;
     height: 500px;
-    margin: 20px;
+}
+
+.auth {
+    width: 100%;
 }
 
 .blueBg {

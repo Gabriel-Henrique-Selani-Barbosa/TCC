@@ -1,9 +1,29 @@
 .content {
-    border-radius: 30px;
-    padding: 0 22px;
-    min-height: calc(100vh - 1.50rem);
-    min-width: 0px;
-    flex: 1 1 0%;
-    --tw-bg-opacity: 1;
-    background: #f1f5f9;
+    transition: 0.2s ease-in-out;
+    width: 100%;
+}
+
+#user-table {
+    width: calc(100% - 40px) !important;
+    display: block;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff !important;
+    .table {
+        display: block;
+        margin: 0 auto;
+        border-collapse: collapse;
+        th, td {
+            border-top: 1px solid #e9ecef;
+            padding: 5px;
+            text-align: center;
+        }
+        tbody {
+            tr {
+                &:nth-of-type(odd) {
+                    background: rgba(0,0,0,.05);
+                }
+            }
+        }
+    }
 }
