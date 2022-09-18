@@ -105,12 +105,13 @@ app.post("/login", (req, res) => {
 
 app.post("/registrar-equipamento", (req, res) => {
   const nome_empresa = req.body.nome_empresa;
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
-  });
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  })
   const cliente = req.body.nome_cliente;
   const condominio = req.body.condominio;
   const terreno = req.body.terreno;
@@ -123,18 +124,35 @@ app.post("/registrar-equipamento", (req, res) => {
   const envioboleto = req.body.envioboleto;
   const centrodecusto = req.body.centrodecusto;
   const observacao = req.body.obersao;
-  db.query("INSERT INTO equipamentos (cliente, condominio, terreno, metragem, razao, datade, para, numerodocumento, valor, envioboleto, centrodecusto, observacao) VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-  [cliente, condominio, terreno, metragem, razao, datade, para, ndocumento, valor, envioboleto, centrodecusto, observacao],)
+  const insertEquip = async () => {
+    try {
+      await db.connect();
+      await db.query(`INSERT INTO ${nome_empresa}.tb_equip (cliente, condominio, terreno, metragem, razao, datade, para, numerodocumento, valor, envioboleto, centrodecusto, observacao), VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`, [cliente, condominio, terreno, metragem, razao, datade, para, ndocumento, valor, envioboleto, centrodecusto, observacao]);
+      return true;
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+
+  insertEquip().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
 });
 
 app.post("/registar-maodeobra", (req, res) => {
   const nome_empresa = req.body.nome_empresa;
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
-  });
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  })
   const cliente = req.body.nome_cliente;
   const condominio = req.body.condominio;
   const terreno = req.body.terreno;
@@ -142,57 +160,80 @@ app.post("/registar-maodeobra", (req, res) => {
   const medicao = req.body.medicao;
   const servico = req.body.servico
   const total = req.body.total;
-  db.query("INSERT INTO maodeobra (cliente, condominio, terreno, data, medicao, servico, total) VALUE (?, ?, ?, ?, ?, ?, ?)", [cliente, condominio, terreno, data, medicao, servico, total])
-})
-
-app.post("registrar-obra", (req, res) => {
-  const nome_empresa = req.body.nome_empresa;
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
-  });
-  const nomeobra = req.body.nomeobra
-  const cliente = req.body.nome_cliente
-  const situacao = req.body.situacao
-  const categoria = req.body.categoria
-  db.query("INSERT INTO obra (nomeobra, cliente, situacao, categoria) VALUE (?, ?, ?, ?)", [nomeobra, cliente, situacao, categoria])
+  const insertMaoObra = async () => {
+    try {
+      await db.connect();
+      await db.query(`INSERT INTO ${nome_empresa}.tb_maodeobra (cliente, condominio, terreno, data, medicao, servico, total) VALUES ($1, $2, $3, $4, $5, $6, $7)`, [cliente, condominio, terreno, data, medicao, servico, total]);
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  insertMaoObra().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
 })
 
 app.get("/get-pedidos", (req, res) => {
   const nome_empresa = req.query.storeName;
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
   });
-  db.query("SELECT * FROM tb_pedido", (err, result) => {
-    if(err) {
-      res.send(err)
+  const getPedidos = async () => {
+    try {
+      await db.connect();
+      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_pedido`);
+      if (result) {
+        res.send(result);
+      }else {
+        res.send("no results found");
+      }
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
     }
-    if(result) {
-      res.send(result)
+  }
+  getPedidos().then((result) => {
+    if (result) {
+      console.log('logado');
     }
-  });
+  })
 });
 
 app.post("/delete-pedidos", (req, res) => {
   const nome_empresa = req.body.storeName;
   const pedido_id = req.body.pedido_id
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
-  });
-  db.query("DELETE FROM tb_pedido WHERE pedido_id = ?", [pedido_id], (err, result) => {
-    if(err) {
-      res.send(err)
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  })
+  const deletePedidos = async () => {
+    try {
+      await db.connect();
+      await db.query(`DELETE FROM ${nome_empresa}.tb_pedido WHERE pedido_id in ($1})`, [pedido_id])
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
     }
-    if(result) {
-      res.send("Cliente fornecedor com sucesso")
+  }
+  deletePedidos().then((result) => {
+    if (result) {
+      console.log('logado');
     }
   })
 })
@@ -203,31 +244,61 @@ app.post("/registrar-pedidos", (req, res) => {
   const valor = req.body.valor;
   const data_pedido = req.body.datapedido;
   const observacao = req.body.observacao;
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
   });
-  db.query("INSERT INTO tb_pedido (servico, valor, data_pedido, observação) VALUE (?, ?, ?, ?)", [servico, valor, data_pedido, observacao])
+  const insertPedidos = async () => {
+    try {
+      await db.connect();
+      await db.query(`INSERT INTO ${nome_empresa}.tb_pedido (servico, valor, data_pedido, observação) VALUES ($1, $2, $3, $4)`, [servico, valor, data_pedido, observacao])
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  insertPedidos().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
 })
 
 app.get("/get-equipamentos", (req, res) => {
   const nome_empresa = req.query.storeName;
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
   });
-  db.query("SELECT * FROM tb_equip", (err, result) => {
-    if(err) {
-      res.send(err)
+  const getPedidos = async () => {
+    try {
+      await db.connect();
+      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_equip`);
+      if (result) {
+        res.send(result);
+      }else {
+        res.send("no results found");
+      }
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
     }
-    if(result) {
-      res.send(result)
+  }
+  getPedidos().then((result) => {
+    if (result) {
+      console.log('logado');
     }
-  });
+  })
 });
 
 app.post("/update-equipamentos", (req, res) => {
@@ -237,37 +308,55 @@ app.post("/update-equipamentos", (req, res) => {
   const equipamentoMarca = req.body.equipamentoMarca
   const equipamentoModelo = req.body.equipamentoModelo
   const equipamentoPreco = req.body.equipamentoPreco
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
   });
-  db.query("UPDATE tb_equip SET categoria =?, marca = ?, modelo = ?, preco= ? WHERE equip_id = ? ", [equipamentoCategoria, equipamentoMarca, equipamentoModelo, equipamentoPreco, id_equip], (err, result) => {
-    if(err) {
-      res.send(err)
+  const updateEquip = async () => {
+    try {
+      await db.connect();
+      await db.query(`UPDATE ${nome_empresa}.tb_equip SET "categoria" = $1, "marca" = $2, "modelo" = $3, "preco" = $4 WHERE equip_id in ($5)`, [equipamentoCategoria, equipamentoMarca, equipamentoModelo, equipamentoPreco, id_equip]);
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
     }
-    if(result) {
-      res.send("Cliente fornecedor com sucesso")
+  }
+  updateEquip().then((result) => {
+    if (result) {
+      console.log('logado');
     }
   })
 })
 
 app.post("/delete-equipamentos", (req, res) => {
   const nome_empresa = req.body.storeName;
-  const id_equip = req.body.equip_id
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
-  });
-  db.query("DELETE FROM tb_equip WHERE equip_id = ?", [id_equip], (err, result) => {
-    if(err) {
-      res.send(err)
+  const equip_id = req.body.equip_id
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  })
+  const deleteEquip = async () => {
+    try {
+      await db.connect();
+      await db.query(`DELETE FROM ${nome_empresa}.tb_equip WHERE equip_id in ($1})`, [equip_id])
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
     }
-    if(result) {
-      res.send("Cliente fornecedor com sucesso")
+  }
+  deleteEquip().then((result) => {
+    if (result) {
+      console.log('logado');
     }
   })
 })
@@ -278,48 +367,87 @@ app.post("/registrar-equipamentos", (req, res) => {
   const marca = req.body.marca;
   const modelo = req.body.modelo;
   const preco = req.body.preco;
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
   });
-  db.query("INSERT INTO tb_equip (categoria, marca, modelo, preco) VALUE (?, ?, ?, ?)", [categoria, marca, modelo, preco])
+  const insertEquip = async () => {
+    try {
+      await db.connect();
+      await db.query(`INSERT INTO ${nome_empresa}.tb_equip (categoria, marca, modelo, preco) VALUES ($1, $2, $3, $4)`, [categoria, marca, modelo, preco])
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  insertEquip().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
 })
 
 app.get("/get-fornecedores", (req, res) => {
   const nome_empresa = req.query.storeName;
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
   });
-  db.query("SELECT * FROM tb_fornecedor", (err, result) => {
-    if(err) {
-      res.send(err)
+  const getFornecedores = async () => {
+    try {
+      await db.connect();
+      const result = await db.query(`SELECT * ${nome_empresa}.tb_fornecedor`)
+      if (result) {
+        res.send(result);
+      }else {
+        res.send("no results found");
+      }
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
     }
-    if(result) {
-      res.send(result)
+  }
+  getFornecedores().then((result) => {
+    if (result) {
+      console.log('logado');
     }
-  });
+  })
 });
 
 app.post("/delete-fornecedores", (req, res) => {
   const nome_empresa = req.body.storeName;
-  const id_fornecedor = req.body.cliente_id
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
-  });
-  db.query("DELETE FROM tb_fornecedor WHERE id_fornecedor = ?", [id_fornecedor], (err, result) => {
-    if(err) {
-      res.send(err)
+  const id_fornecedor = req.body.cliente_id;
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  })
+  const deleteFornecedor = async () => {
+    try {
+      await db.connect();
+      await db.query(`DELETE FROM ${nome_empresa}.tb_fornecedor WHERE id_fornecedor in ($1})`, [id_fornecedor])
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
     }
-    if(result) {
-      res.send("Cliente fornecedor com sucesso")
+  }
+  deleteFornecedor().then((result) => {
+    if (result) {
+      console.log('logado');
     }
   })
 })
@@ -329,48 +457,87 @@ app.post("/registrar-fornecedores", (req, res) => {
   const nome = req.body.nome;
   const cnpjcpf = req.body.cnpjcpf;
   const produto = req.body.produto;
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
   });
-  db.query("INSERT INTO tb_fornecedor (cpf_cnpj, nome, produto) VALUE (?, ?, ?)", [cnpjcpf, nome, produto])
+  const insertFornecedor = async () => {
+    try {
+      await db.connect();
+      await db.query(`INSERT INTO ${nome_empresa}.tb_fornecedor (cpf_cnpj, nome, produto) VALUES ($1, $2, $3)`, [cnpjcpf, nome, produto])
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  insertFornecedor().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
 })
 
 app.get("/get-clientes", (req, res) => {
   const nome_empresa = req.query.storeName;
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
   });
-  db.query("SELECT * FROM tb_client", (err, result) => {
-    if(err) {
-      res.send(err)
+  const getClientes = async () => {
+    try {
+      await db.connect();
+      const result = await db.query(`SELECT * ${nome_empresa}.tb_cliente`)
+      if (result) {
+        res.send(result);
+      }else {
+        res.send("no results found");
+      }
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
     }
-    if(result) {
-      res.send(result)
+  }
+  getClientes().then((result) => {
+    if (result) {
+      console.log('logado');
     }
-  });
+  })
 });
 
 app.post("/delete-clientes", (req, res) => {
   const nome_empresa = req.body.storeName;
   const cliente_id = req.body.cliente_id
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
-  });
-  db.query("DELETE FROM tb_client WHERE client_id = ?", [cliente_id], (err, result) => {
-    if(err) {
-      res.send(err)
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  })
+  const deleteCliente = async () => {
+    try {
+      await db.connect();
+      await db.query(`DELETE FROM ${nome_empresa}.tb_client WHERE client_id in ($1})`, [cliente_id])
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
     }
-    if(result) {
-      res.send("Cliente deletado com sucesso")
+  }
+  deleteCliente().then((result) => {
+    if (result) {
+      console.log('logado');
     }
   })
 })
@@ -383,13 +550,29 @@ app.post("/registrar-cliente", (req, res) => {
   const cidade = req.body.cidade;
   const endereco = req.body.endereco;
   const numero = req.body.numero;
-  const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "1574857",
-    database: `${nome_empresa}`,
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
   });
-  db.query("INSERT INTO tb_client (cpf_cnpj, nome, endereco, num, cidade, estado) VALUE (?, ?, ?, ?, ?, ?)", [cnpjcpf, nome, endereco, numero, cidade, estado])
+  const insertClient = async () => {
+    try {
+      await db.connect();
+      await db.query(`INSERT INTO ${nome_empresa}.tb_client (cpf_cnpj, nome, endereco, num, cidade, estado VALUES ($1, $2, $3, $4, $5, $6)`, [cnpjcpf, nome, endereco, numero, cidade, estado])
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  insertClient().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
 })
 
 app.listen(3001, () => {
