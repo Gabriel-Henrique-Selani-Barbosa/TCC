@@ -2,7 +2,7 @@
 	<div class="menu">
 		<aside>
 			<div class="logo">
-				<a href='https://br.freepik.com/fotos-vetores-gratis/logo-pessoal'><img :src="logoURL" alt="Logo pessoal vetor criado por freepik - br.freepik.com"/></a>
+				<a href='https://br.freepik.com/fotos-vetores-gratis/logo-pessoal'><img alt="Logo pessoal vetor criado por freepik - br.freepik.com"/></a>
 			</div>
 
 			<div class="divider"></div>

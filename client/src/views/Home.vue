@@ -1,6 +1,10 @@
 <template>
-		<Sidebar />
-		<router-view />
+    <div>
+      <Sidebar />
+      <div class="Sidebar">
+        testando
+      </div>
+    </div>
 </template>
 
 <script>
