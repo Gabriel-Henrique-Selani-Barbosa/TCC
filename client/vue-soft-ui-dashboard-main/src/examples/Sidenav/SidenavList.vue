@@ -7,57 +7,35 @@
       <li class="nav-item">
         <sidenav-collapse navText="Dashboard" :to="{ name: 'Dashboard' }">
           <template #icon>
-            <shop />
+            <icon icon="home" />
           </template>
         </sidenav-collapse>
       </li>
       <li class="nav-item">
-        <sidenav-collapse navText="Clientes" :to="{ name: 'Clients' }">
+        <sidenav-collapse navText="Clientes" :to="{ name: 'Clientes' }">
           <template #icon>
-            <office />
+            <icon icon="users" />
           </template>
         </sidenav-collapse>
       </li>
       <li class="nav-item">
-        <sidenav-collapse navText="Equipamentos" :to="{ name: 'Equipments' }">
+        <sidenav-collapse navText="Equipamentos" :to="{ name: 'Equipamentos' }">
           <template #icon>
-            <credit-card />
+            <icon icon="tools" />
           </template>
         </sidenav-collapse>
       </li>
       <li class="nav-item">
-        <sidenav-collapse navText="Fornecedores" :to="{ name: 'Providers' }">
+        <sidenav-collapse navText="Fornecedores" :to="{ name: 'Fornecedores' }">
           <template #icon>
-            <settings />
+            <icon icon="book" />
           </template>
         </sidenav-collapse>
       </li>
       <li class="nav-item">
-        <sidenav-collapse navText="Pedidos" :to="{ name: 'Requests' }">
+        <sidenav-collapse navText="Pedidos" :to="{ name: 'Pedidos' }">
           <template #icon>
-            <settings />
-          </template>
-        </sidenav-collapse>
-      </li>
-      <li class="mt-3 nav-item">
-        <h6
-          class="text-xs ps-4 text-uppercase font-weight-bolder opacity-6"
-          :class="this.$store.state.isRTL ? 'me-4' : 'ms-2'"
-        >
-          PAGES
-        </h6>
-      </li>
-      <li class="nav-item">
-        <sidenav-collapse navText="Sign In" :to="{ name: 'Sign In' }">
-          <template #icon>
-            <document />
-          </template>
-        </sidenav-collapse>
-      </li>
-      <li class="nav-item">
-        <sidenav-collapse navText="Sign Up" :to="{ name: 'Sign Up' }">
-          <template #icon>
-            <spaceship />
+            <icon icon="list" />
           </template>
         </sidenav-collapse>
       </li>
@@ -66,12 +44,7 @@
 </template>
 <script>
 import SidenavCollapse from "./SidenavCollapse.vue";
-import Shop from "../../components/Icon/Shop.vue";
-import Office from "../../components/Icon/Office.vue";
-import CreditCard from "../../components/Icon/CreditCard.vue";
-import Document from "../../components/Icon/Document.vue";
-import Spaceship from "../../components/Icon/Spaceship.vue";
-import Settings from "../../components/Icon/Settings.vue";
+import Icon from "../../components/Icon/Icon.vue";
 
 export default {
   name: "SidenavList",
@@ -87,12 +60,7 @@ export default {
   },
   components: {
     SidenavCollapse,
-    Shop,
-    Office,
-    CreditCard,
-    Document,
-    Spaceship,
-    Settings,
+    Icon,
   },
   methods: {
     getRoute() {
