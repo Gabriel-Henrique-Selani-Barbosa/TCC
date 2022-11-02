@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import Auth from "@/views/Auth.vue";
 import Dashboard from "@/views/Dashboard.vue";
 import Providers from "@/views/Providers.vue";
 import Clients from "@/views/Clients.vue";
@@ -11,12 +12,13 @@ const routes = [
   {
     path: "/",
     name: "/",
-    redirect: "/dashboard",
+    component: Auth,
   },
   {
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
+    props: true
   },
   {
     path: "/clientes",
