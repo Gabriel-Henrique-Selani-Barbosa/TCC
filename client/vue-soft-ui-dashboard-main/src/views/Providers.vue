@@ -5,23 +5,16 @@
         <providers-Table />
       </div>
     </div>
-    <div class="row">
-      <div class="col-12">
-        <projects-table />
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
 import ProvidersTable from "./components/ProvidersTable";
-import ProjectsTable from "./components/ProjectsTable";
 
 export default {
   name: "tables",
   components: {
     ProvidersTable,
-    ProjectsTable,
   },
 };
 </script>

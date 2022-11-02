@@ -3,8 +3,8 @@ import Auth from "@/views/Auth.vue";
 import Dashboard from "@/views/Dashboard.vue";
 import Providers from "@/views/Providers.vue";
 import Clients from "@/views/Clients.vue";
-import Requests from "@/views/Profile.vue";
-import Equipments from "@/views/Profile.vue";
+import Requests from "@/views/Equipments.vue";
+import Equipments from "@/views/Equipments.vue";
 import SignIn from "@/views/SignIn.vue";
 import SignUp from "@/views/SignUp.vue";
 
@@ -18,7 +18,6 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
-    props: true
   },
   {
     path: "/clientes",

@@ -63,7 +63,9 @@ methods: {
           password: this.password
       })
       .then(() => {
-          this.$router.push({name:'Dashboard', params: {store: this.storeName, user: this.username}})
+        localStorage.setItem('store', this.storeName)
+        localStorage.setItem('user', this.username)
+        this.$router.push({name:'Dashboard'})
       })
       .catch((err) => {
         alert(err);

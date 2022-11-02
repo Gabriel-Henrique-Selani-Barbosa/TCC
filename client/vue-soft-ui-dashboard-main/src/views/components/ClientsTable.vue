@@ -1,7 +1,11 @@
 <template>
+  <button
+    @click="showAddClient()"
+  >Adicionar cliente
+  </button>
   <div class="card mb-4">
     <div class="card-header pb-0">
-      <h6>Clientes</h6>
+      <h6>clientes</h6>
     </div>
     <div class="card-body px-0 pt-0 pb-2">
       <div class="table-responsive p-0">
@@ -11,289 +15,129 @@
               <th
                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
               >
-                Author
+                Id
               </th>
               <th
                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
               >
-                Function
+                Nome
               </th>
               <th
                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
               >
-                Status
+                CPF/CNPJ
               </th>
               <th
                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
               >
-                Employed
+                ESTADO
+              </th>
+              <th
+                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
+              >
+                CIDADE
+              </th>
+              <th
+                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
+              >
+                ENDEREÇO
+              </th>
+              <th
+                class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
+              >
+                NUMERO
               </th>
               <th class="text-secondary opacity-7"></th>
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr v-for="cliente in clientes" :key="cliente.client_id">
               <td>
                 <div class="d-flex px-2 py-1">
-                  <div>
-                    <soft-avatar
-                      :img="img1"
-                      size="sm"
-                      border-radius="lg"
-                      class="me-3"
-                      alt="user1"
-                    />
-                  </div>
                   <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">John Michael</h6>
-                    <p class="text-xs text-secondary mb-0">
-                      john@creative-tim.com
-                    </p>
+                    <h6 class="mb-0 text-sm">{{ cliente.client_id }}</h6>
                   </div>
                 </div>
               </td>
               <td>
-                <p class="text-xs font-weight-bold mb-0">Manager</p>
-                <p class="text-xs text-secondary mb-0">Organization</p>
+                <input
+                  v-if="editcliente === cliente.client_id"
+                  type="text"
+                  v-model="clienteName"
+                  :placeholder="cliente.nome"
+                />
+                <p v-else class="text-xs font-weight-bold mb-0">{{ cliente.nome }}</p>
               </td>
               <td class="align-middle text-center text-sm">
-                <soft-badge color="success" variant="gradient" size="sm"
-                  >Online</soft-badge
+                <input
+                  v-if="editcliente === cliente.client_id"
+                  type="text"
+                  v-model="clienteCpfCnpj"
+                  :placeholder="cliente.cpf_cnpj"
+                />
+                <p v-else class="text-xs font-weight-bold mb-0">{{ cliente.cpf_cnpj }}</p>
+              </td>
+              <td class="align-middle text-center">
+                <input
+                  v-if="editcliente === cliente.client_id"
+                  type="text"
+                  v-model="clienteEstado"
+                  :placeholder="cliente.estado"
+                />
+                <span v-else class="text-secondary text-xs font-weight-bold"
+                  >{{ cliente.estado }}</span
                 >
               </td>
               <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold"
-                  >23/04/18</span
+                <input
+                  v-if="editcliente === cliente.client_id"
+                  type="text"
+                  v-model="clienteCidade"
+                  :placeholder="cliente.cidade"
+                />
+                <span v-else class="text-secondary text-xs font-weight-bold"
+                  >{{ cliente.cidade }}</span
+                >
+              </td>
+              <td class="align-middle text-center">
+                <input
+                  v-if="editcliente === cliente.client_id"
+                  type="text"
+                  v-model="clienteEndereco"
+                  :placeholder="cliente.endereco"
+                />
+                <span v-else class="text-secondary text-xs font-weight-bold"
+                  >{{ cliente.endereco }}</span
+                >
+              </td>
+              <td class="align-middle text-center">
+                <input
+                  v-if="editcliente === cliente.client_id"
+                  type="text"
+                  v-model="clienteNumero"
+                  :placeholder="cliente.num"
+                />
+                <span v-else class="text-secondary text-xs font-weight-bold"
+                  >{{ cliente.num }}</span
                 >
               </td>
               <td class="align-middle">
                 <a
+                  v-if="editcliente === cliente.client_id"
                   href="javascript:;"
                   class="text-secondary font-weight-bold text-xs"
                   data-toggle="tooltip"
-                  data-original-title="Edit user"
-                  >Edit</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div>
-                    <soft-avatar
-                      :img="img2"
-                      class="me-3"
-                      size="sm"
-                      border-radius="lg"
-                      alt="user2"
-                    />
-                  </div>
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">Alexa Liras</h6>
-                    <p class="text-xs text-secondary mb-0">
-                      alexa@creative-tim.com
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">Programator</p>
-                <p class="text-xs text-secondary mb-0">Developer</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <soft-badge color="secondary" variant="gradient" size="sm"
-                  >Offline</soft-badge
-                >
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold"
-                  >11/01/19</span
-                >
-              </td>
-              <td class="align-middle">
+                  data-original-title="Save user"
+                  @click="handleSavecliente(cliente.client_id)"
+                  >Salvar</a>
                 <a
+                  v-else
                   href="javascript:;"
                   class="text-secondary font-weight-bold text-xs"
                   data-toggle="tooltip"
                   data-original-title="Edit user"
-                  >Edit</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div>
-                    <soft-avatar
-                      :img="img3"
-                      size="sm"
-                      border-radius="lg"
-                      class="me-3"
-                      alt="user3"
-                    />
-                  </div>
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">Laurent Perrier</h6>
-                    <p class="text-xs text-secondary mb-0">
-                      laurent@creative-tim.com
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">Executive</p>
-                <p class="text-xs text-secondary mb-0">Projects</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <soft-badge color="success" variant="gradient" size="sm"
-                  >Online</soft-badge
-                >
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold"
-                  >19/09/17</span
-                >
-              </td>
-              <td class="align-middle">
-                <a
-                  href="javascript:;"
-                  class="text-secondary font-weight-bold text-xs"
-                  data-toggle="tooltip"
-                  data-original-title="Edit user"
-                  >Edit</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div>
-                    <soft-avatar
-                      :img="img4"
-                      class="me-3"
-                      size="sm"
-                      border-radius="lg"
-                      alt="user4"
-                    />
-                  </div>
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">Michael Levi</h6>
-                    <p class="text-xs text-secondary mb-0">
-                      michael@creative-tim.com
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">Programator</p>
-                <p class="text-xs text-secondary mb-0">Developer</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <soft-badge color="success" variant="gradient" size="sm"
-                  >Online</soft-badge
-                >
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold"
-                  >24/12/08</span
-                >
-              </td>
-              <td class="align-middle">
-                <a
-                  href="javascript:;"
-                  class="text-secondary font-weight-bold text-xs"
-                  data-toggle="tooltip"
-                  data-original-title="Edit user"
-                  >Edit</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div>
-                    <soft-avatar
-                      :img="img5"
-                      class="me-3"
-                      size="sm"
-                      border-radius="lg"
-                      alt="user5"
-                    />
-                  </div>
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">Richard Gran</h6>
-                    <p class="text-xs text-secondary mb-0">
-                      richard@creative-tim.com
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">Manager</p>
-                <p class="text-xs text-secondary mb-0">Executive</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <soft-badge color="secondary" variant="gradient" size="sm"
-                  >Offline</soft-badge
-                >
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold"
-                  >04/10/21</span
-                >
-              </td>
-              <td class="align-middle">
-                <a
-                  href="javascript:;"
-                  class="text-secondary font-weight-bold text-xs"
-                  data-toggle="tooltip"
-                  data-original-title="Edit user"
-                  >Edit</a
-                >
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex px-2 py-1">
-                  <div>
-                    <soft-avatar
-                      :img="img6"
-                      class="me-3"
-                      size="sm"
-                      border-radius="lg"
-                      alt="user6"
-                    />
-                  </div>
-                  <div class="d-flex flex-column justify-content-center">
-                    <h6 class="mb-0 text-sm">Miriam Eric</h6>
-                    <p class="text-xs text-secondary mb-0">
-                      miriam@creative-tim.com
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <p class="text-xs font-weight-bold mb-0">Programtor</p>
-                <p class="text-xs text-secondary mb-0">Developer</p>
-              </td>
-              <td class="align-middle text-center text-sm">
-                <soft-badge color="secondary" variant="gradient" size="sm"
-                  >Offline</soft-badge
-                >
-              </td>
-              <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold"
-                  >14/09/20</span
-                >
-              </td>
-              <td class="align-middle">
-                <a
-                  href="javascript:;"
-                  class="text-secondary font-weight-bold text-xs"
-                  data-toggle="tooltip"
-                  data-original-title="Edit user"
-                  >Edit</a
-                >
+                  @click="handleEditcliente(cliente.client_id)"
+                  >Edit</a>
               </td>
             </tr>
           </tbody>
@@ -301,33 +145,137 @@
       </div>
     </div>
   </div>
+  <div class="addUser"
+    v-if="addClientScreen"
+  >
+    <div>
+        <label>Nome:</label>
+        <input v-model="clientName">
+    </div>
+    <div>
+        <label>Cnpj/Cpf:</label>
+        <input v-model="clientcnpjcpf">
+    </div>
+    <div>
+        <label>Estado:</label>
+        <input v-model="clientEstado">
+    </div>
+    <div>
+        <label>Cidade:</label>
+        <input v-model="clientCidade">
+    </div>
+    <div>
+        <label>Endereco:</label>
+        <input v-model="clientEndereco">
+    </div>
+    <div>
+        <label>Numero:</label>
+        <input v-model="clientNumero">
+    </div>
+    <button @click="addClient()">Adicionar</button>
+  </div>
 </template>
 
 <script>
-import SoftAvatar from "@/components/SoftAvatar.vue";
-import SoftBadge from "@/components/SoftBadge.vue";
-import img1 from "../../assets/img/team-2.jpg";
-import img2 from "../../assets/img/team-3.jpg";
-import img3 from "../../assets/img/team-4.jpg";
-import img4 from "../../assets/img/team-3.jpg";
-import img5 from "../../assets/img/team-2.jpg";
-import img6 from "../../assets/img/team-4.jpg";
-
+import axios from "axios";
 export default {
   name: "authors-table",
   data() {
     return {
-      img1,
-      img2,
-      img3,
-      img4,
-      img5,
-      img6,
+      clientes: [],
+      storeName: localStorage.getItem('store'),
+      clientName: '',
+      clientcnpjcpf: '',
+      clientEstado: '',
+      clientCidade: '',
+      clientEndereco: '',
+      clientNumero: '',
+      addClientScreen: false,
+      editcliente: '',
+      clienteNumero: '',
+      clienteEndereco: '',
+      clienteCidade: '',
+      clienteEstado: '',
+      clienteName: '',
+      clienteCpfCnpj: '',
     };
   },
-  components: {
-    SoftAvatar,
-    SoftBadge,
+  mounted: function () {
+    this.getTableList();
   },
+  methods: {
+    getTableList: function () {
+      axios
+        .get("http://localhost:3001/get-clientes", {
+            params: {
+                storeName: this.storeName
+            }
+        })
+        .then((res) => {
+            this.clientes = res.data.rows;
+            console.log(this.clientes)
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    showAddClient() {
+      this.addClientScreen = true
+    },
+    addClient() {
+      axios
+        .post('http://localhost:3001/registrar-cliente', {
+            storeName: this.storeName,
+            nome: this.clientName,
+            cnpjcpf: this.clientcnpjcpf,
+            estado: this.clientEstado,
+            cidade: this.clientCidade,
+            endereco: this.clientEndereco,
+            numero: this.clientNumero,
+        })
+        .then(() => {
+          this.clientName = '';
+          this.clientcnpjcpf = '';
+          this.clientEstado = '';
+          this.clientCidade = '';
+          this.clientEndereco = '';
+          this.clientNumero = '';
+          this.addClientScreen = false;
+          this.getTableList();
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    },
+    handleEditcliente(id) {
+      this.editcliente = id
+    },
+    handleSavecliente(providerid) {
+      axios
+        .post("http://localhost:3001/update-clientes", {
+          storeName: this.storeName,
+          id: providerid,
+          nome: this.clienteName,
+          cnpjcpf: this.clienteCpfCnpj,
+          estado: this.clienteEstado,
+          cidade: this.clienteCidade,
+          endereco: this.clienteEndereco,
+          numero: this.clienteNumero,
+        })
+        .then(() => {
+          this.clienteName = '';
+          this.clienteCpfCnpj = '';
+          this.clienteEstado = '';
+          this.clienteCidade = '';
+          this.clienteEndereco = '';
+          this.clienteNumero = '';
+          this.editcliente = '';
+          this.getTableList();
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    },
+  }
 };
 </script>
