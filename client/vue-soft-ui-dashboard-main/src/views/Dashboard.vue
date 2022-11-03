@@ -104,5 +104,10 @@ export default {
       },
     };
   },
+  created() {
+    if (!localStorage.getItem("store")) {
+      this.$router.push({name:'/'})
+    }
+  }
 }
 </script>

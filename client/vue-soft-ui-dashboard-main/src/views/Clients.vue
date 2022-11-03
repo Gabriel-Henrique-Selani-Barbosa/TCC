@@ -16,5 +16,10 @@ export default {
   components: {
     ClientsTable,
   },
+  created() {
+    if (!localStorage.getItem("store")) {
+      this.$router.push({name:'/'})
+    }
+  },
 };
 </script>

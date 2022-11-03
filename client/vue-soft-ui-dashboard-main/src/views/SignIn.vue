@@ -90,7 +90,6 @@
 
 <script>
 import Navbar from "@/examples/PageLayout/Navbar.vue";
-import AppFooter from "@/examples/PageLayout/Footer.vue";
 import SoftInput from "@/components/SoftInput.vue";
 import SoftSwitch from "@/components/SoftSwitch.vue";
 import SoftButton from "@/components/SoftButton.vue";
@@ -101,7 +100,6 @@ export default {
   name: "SignIn",
   components: {
     Navbar,
-    AppFooter,
     SoftInput,
     SoftSwitch,
     SoftButton,

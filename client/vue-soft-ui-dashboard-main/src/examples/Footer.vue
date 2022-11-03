@@ -16,7 +16,7 @@
               target="_blank"
               >Creative Tim</a
             >
-            for a better web.
+            for a better web
           </div>
         </div>
         <div class="col-lg-6">

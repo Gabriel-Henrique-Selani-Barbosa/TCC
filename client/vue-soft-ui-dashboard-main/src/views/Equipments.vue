@@ -156,6 +156,11 @@ export default {
       equipamentoPreco: '',
     };
   },
+  created() {
+    if (!localStorage.getItem("store")) {
+      this.$router.push({name:'/'})
+    }
+  },
   mounted: function () {
     this.getTableList();
   },
