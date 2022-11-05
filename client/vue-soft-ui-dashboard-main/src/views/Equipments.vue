@@ -1,8 +1,24 @@
 <template>
-  <button
-    @click="showAddEquip()"
-  >Adicionar Equipamento
-  </button>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <button
+      class="addItem"
+      @click="showAddEquip()"
+    >Adicionar Equipamento
+    </button>
+    <div class="input-group live-search">
+      <span class="input-group-text text-body"
+        ><i class="fas fa-search" aria-hidden="true"></i
+      ></span>
+      <input
+        type="text"
+        class="form-control"
+        v-model="categoryNameSearchString"
+        :placeholder="
+          'Pesquisar...'
+        "
+      />
+    </div>
+  </div>
   <div class="card mb-4">
     <div class="card-header pb-0">
       <h6>Equipamentos</h6>
@@ -41,7 +57,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="equipamento in equipamentos" :key="equipamento.equip_id">
+            <tr v-for="equipamento in filteredEquipements" :key="equipamento.equip_id">
               <td>
                 <div class="d-flex px-2 py-1">
                   <div class="d-flex flex-column justify-content-center">
@@ -113,9 +129,11 @@
       </div>
     </div>
   </div>
-  <div class="addUser"
+  <div v-if="addEquipScreen" class="modal-overlay"></div>
+  <div class="addUser modal"
     v-if="addEquipScreen"
   >
+  <div class="close" @click="addEquipScreen = false"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAABzUlEQVRYhe3Wy27TYBAF4A+2ZAkRECpuFeVdemFL6RMAZYHaF2FHEQ9QhRYJBDwILCo2sKDsoV2FEMzin8iRaxzbKeqiPZKl5J8zM8dje2Y4w2nHuYb8OdzDIm7Ef/iGr3iPN9g/LoFj9LCFIbIp1wh9XD+u5Cs4iOADbOM+FnAhrgWshm0Q3AMsz5r8iXRHmXRXN2v43MKOvBrrbZOvRIDfeNrCfyN8R1pUoicve5vkkyIy/MSVJo4v5WWfFbsRa6uuw5xUuoHyZ/4Q3ZLzbtiKuB2xhlJlp2JdUrxdYnsUtk8FEd04y4JTRL/CdgQfgrxaYptMNBZRdlbEWtjf1RHwOch3/mEvJpyWnNQnMuzVEXAY5E4F5xI+yrvfHi5X8DvBOywazpeQszoqS1A1V8Z5/tQJdOKP4MRfwsf+32dY1ieO4JrUNAbSYCmiaSOa17ARwQtJ8U5dhwq8jljPmzhdlQ+jjRmSb0aMH6o/01Isy8dxGxGb8nG82MIfaS6MF5JdabBMw7y87CPppZ4JS9I8H69kfTzAXanDdeL3Gl7hl7zsre+8iIt4pt5SOpRmf60FpOla3pNWtSVpV5hcy79Ia/lbfG8Y9wynGH8BHnKpr/YwVJ8AAAAASUVORK5CYII="></div>
     <div>
         <label>Categoria:</label>
         <input v-model="equipCategoria">
@@ -132,7 +150,7 @@
         <label>Preco:</label>
         <input v-model="equipPreco">
     </div>
-    <button @click="addEquip()">Adicionar</button>
+    <button class="addItem" @click="addEquip()">Adicionar</button>
   </div>
 </template>
 
@@ -154,8 +172,24 @@ export default {
       equipamentoCategoria: '',
       equipamentoMarca: '',
       equipamentoPreco: '',
+      categoryNameSearchString: '',
     };
   },
+  computed: {
+    filteredEquipements() {
+        var filtered = this.equipamentos
+        var categoryNameSearchString = this.categoryNameSearchString.toLowerCase()
+        if(!categoryNameSearchString) {
+            return filtered
+        }
+        filtered = filtered.filter(function(item){
+            if(item.categoria.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.modelo.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.preco.toLowerCase().indexOf(categoryNameSearchString) !== -1) {
+                return item
+            }
+        })
+        return filtered
+    },
+},
   created() {
     if (!localStorage.getItem("store")) {
       this.$router.push({name:'/'})

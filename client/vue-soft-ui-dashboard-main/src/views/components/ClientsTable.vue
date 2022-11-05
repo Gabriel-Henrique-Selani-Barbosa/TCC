@@ -1,8 +1,24 @@
 <template>
-  <button
+  <div class="d-flex justify-content-between align-items-center mb-3">
+  <button class="addItem"
     @click="showAddClient()"
   >Adicionar cliente
   </button>
+  <input type="file" @change="onFileChange" />
+    <div class="input-group live-search">
+      <span class="input-group-text text-body"
+        ><i class="fas fa-search" aria-hidden="true"></i
+      ></span>
+      <input
+        type="text"
+        class="form-control"
+        v-model="categoryNameSearchString"
+        :placeholder="
+          'Pesquisar...'
+        "
+      />
+    </div>
+  </div>
   <div class="card mb-4">
     <div class="card-header pb-0">
       <h6>clientes</h6>
@@ -51,7 +67,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="cliente in clientes" :key="cliente.client_id">
+            <tr v-for="cliente in filteredClients" :key="cliente.client_id">
               <td>
                 <div class="d-flex px-2 py-1">
                   <div class="d-flex flex-column justify-content-center">
@@ -138,6 +154,17 @@
                   data-original-title="Edit user"
                   @click="handleEditcliente(cliente.client_id)"
                   >Edit</a>
+                <a style="margin-left: 15px"
+                  href="javascript:;"
+                  @click="handleDeleteUser(cliente.client_id)"
+                >
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                  width="25" height="25"
+                  viewBox="0,0,256,256"
+                  style="fill:#ff0000;">
+                  <g fill="#ff0000" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(8.53333,8.53333)"><path d="M13,3c-0.26757,-0.00363 -0.52543,0.10012 -0.71593,0.28805c-0.1905,0.18793 -0.29774,0.44436 -0.29774,0.71195h-5.98633c-0.36064,-0.0051 -0.69608,0.18438 -0.87789,0.49587c-0.18181,0.3115 -0.18181,0.69676 0,1.00825c0.18181,0.3115 0.51725,0.50097 0.87789,0.49587h18c0.36064,0.0051 0.69608,-0.18438 0.87789,-0.49587c0.18181,-0.3115 0.18181,-0.69676 0,-1.00825c-0.18181,-0.3115 -0.51725,-0.50097 -0.87789,-0.49587h-5.98633c0,-0.26759 -0.10724,-0.52403 -0.29774,-0.71195c-0.1905,-0.18793 -0.44836,-0.29168 -0.71593,-0.28805zM6,8v16c0,1.105 0.895,2 2,2h14c1.105,0 2,-0.895 2,-2v-16z"></path></g></g>
+                </svg>
+                </a>
               </td>
             </tr>
           </tbody>
@@ -145,9 +172,12 @@
       </div>
     </div>
   </div>
-  <div class="addUser"
+  <div v-if="addClientScreen" class="modal-overlay"></div>
+ 
+  <div class="addUser modal"
     v-if="addClientScreen"
   >
+  <div class="close" @click="addClientScreen = false"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAABzUlEQVRYhe3Wy27TYBAF4A+2ZAkRECpuFeVdemFL6RMAZYHaF2FHEQ9QhRYJBDwILCo2sKDsoV2FEMzin8iRaxzbKeqiPZKl5J8zM8dje2Y4w2nHuYb8OdzDIm7Ef/iGr3iPN9g/LoFj9LCFIbIp1wh9XD+u5Cs4iOADbOM+FnAhrgWshm0Q3AMsz5r8iXRHmXRXN2v43MKOvBrrbZOvRIDfeNrCfyN8R1pUoicve5vkkyIy/MSVJo4v5WWfFbsRa6uuw5xUuoHyZ/4Q3ZLzbtiKuB2xhlJlp2JdUrxdYnsUtk8FEd04y4JTRL/CdgQfgrxaYptMNBZRdlbEWtjf1RHwOch3/mEvJpyWnNQnMuzVEXAY5E4F5xI+yrvfHi5X8DvBOywazpeQszoqS1A1V8Z5/tQJdOKP4MRfwsf+32dY1ieO4JrUNAbSYCmiaSOa17ARwQtJ8U5dhwq8jljPmzhdlQ+jjRmSb0aMH6o/01Isy8dxGxGb8nG82MIfaS6MF5JdabBMw7y87CPppZ4JS9I8H69kfTzAXanDdeL3Gl7hl7zsre+8iIt4pt5SOpRmf60FpOla3pNWtSVpV5hcy79Ia/lbfG8Y9wynGH8BHnKpr/YwVJ8AAAAASUVORK5CYII="></div>
     <div>
         <label>Nome:</label>
         <input v-model="clientName">
@@ -172,12 +202,15 @@
         <label>Numero:</label>
         <input v-model="clientNumero">
     </div>
-    <button @click="addClient()">Adicionar</button>
+    <button class="addItem" @click="addClient()">Adicionar</button>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+import 'sweetalert2/src/sweetalert2.scss';
+import readXlsxFile from 'read-excel-file';
 export default {
   name: "authors-table",
   data() {
@@ -198,10 +231,27 @@ export default {
       clienteEstado: '',
       clienteName: '',
       clienteCpfCnpj: '',
+      categoryNameSearchString: '',
+      massClients: [],
     };
   },
   mounted: function () {
     this.getTableList();
+  },
+  computed: {
+    filteredClients() {
+        var filtered = this.clientes
+        var categoryNameSearchString = this.categoryNameSearchString.toLowerCase()
+        if(!categoryNameSearchString) {
+            return filtered
+        }
+        filtered = filtered.filter(function(item){
+            if(item.nome.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.estado.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.cpf_cnpj.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.endereco.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.cidade.indexOf(categoryNameSearchString) !== -1) {
+                return item
+            }
+        })
+        return filtered
+    },
   },
   methods: {
     getTableList: function () {
@@ -218,6 +268,29 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    onFileChange(event) {
+      let xlsxfile = event.target.files ? event.target.files[0] : null;
+      readXlsxFile(xlsxfile).then((rows) => {
+        axios
+          .post("http://localhost:3001/register-mass-clientes", {
+            storeName: this.storeName,
+            clientes: rows,
+          })
+          .then(() => {
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: 'Registro em massa feito com sucesso',
+              showConfirmButton: false,
+              timer: 1500
+            })
+            this.getTableList();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
     },
     showAddClient() {
       this.addClientScreen = true
@@ -275,6 +348,56 @@ export default {
         .catch((error) => {
           console.log(error)
         })
+    },
+    handleDeleteUser(providerid) {
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: 'btn btn-success',
+          cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+      })
+
+      swalWithBootstrapButtons.fire({
+        title: 'Tem certeza que deseja deletar esse cliente?',
+        text: "Essa ação não poderá ser revertida",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Excluir',
+        cancelButtonText: 'Cancelar',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          axios
+            .post("http://localhost:3001/delete-clientes", {
+                storeName: this.storeName,
+                client_id: providerid,
+            })
+            .then(() => {
+              Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Cliente deletado com sucesso',
+                showConfirmButton: false,
+                timer: 1500
+              })
+              this.getTableList();
+            })
+            .catch(() => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Um erro aconteceu, tente novamente mais tarde',
+              })
+            });
+        } else if (
+          result.dismiss === Swal.DismissReason.cancel
+        ) {
+          swalWithBootstrapButtons.fire(
+            'Cancelado',
+          )
+        }
+      })
     },
   }
 };
