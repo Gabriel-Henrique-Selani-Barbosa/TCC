@@ -134,6 +134,30 @@
     <label for="mass">Adicionar em massa</label>
     <button class="addItem" @click="addProvider()">Adicionar</button>
   </div>
+  <nav
+        class="pagination"
+        role="navigation"
+        aria-label="pagination"
+      >
+        <ul class="pagination-list">
+          <li>
+            <a @click="prev">&laquo;</a>
+          </li>
+          <li  v-for="element in arrayLength"
+              :key="element">
+            <span
+              class="pagination-link go-to has-text-orange"
+              :class="{active: current == element}"
+              aria-label="Goto page 1"
+              @click="current = element"
+              >{{ element }}</span
+            >
+          </li>
+          <li>
+            <a @click="next()">&raquo;</a>
+          </li>
+        </ul>
+      </nav>
 </template>
 
 <script>
@@ -156,27 +180,49 @@ export default {
       fornecedorNome: '',
       fornecedorCpfCnpj: '',
       categoryNameSearchString: '',
+      current: 1,
+      pageSize: 5,
     };
   },
   computed: {
     filteredProviders() {
         var filtered = this.fornecedores
         var categoryNameSearchString = this.categoryNameSearchString.toLowerCase()
-        if(!categoryNameSearchString) {
-            return filtered
+        if (categoryNameSearchString) {
+          filtered = filtered.filter(function(item){
+              if(item.produto.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.nome.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.cpf_cnpj.indexOf(categoryNameSearchString) !== -1) {
+                  return item
+              }
+          })
+          return filtered.slice(this.indexStart, this.indexEnd);
+        }else {
+          return filtered.slice(this.indexStart, this.indexEnd);
         }
-        filtered = filtered.filter(function(item){
-            if(item.produto.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.nome.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.cpf_cnpj.indexOf(categoryNameSearchString) !== -1) {
-                return item
-            }
-        })
-        return filtered
     },
+    indexStart() {
+      return (this.current - 1) * this.pageSize;
+    },
+    indexEnd() {
+      return this.indexStart + this.pageSize;
+    },
+    arrayLength() {
+      return Math.ceil(this.fornecedores.length / this.pageSize)
+    }
   },
   mounted: function () {
     this.getTableList();
   },
   methods: {
+    prev() {
+      if (this.current > 1) {
+        this.current--;
+      }
+    },
+    next() {
+      if (this.current < Math.ceil(this.fornecedores.length / this.pageSize)){
+        this.current++;
+      }
+    },
     getTableList: function () {
       axios
         .get("http://localhost:3001/get-fornecedores/", {

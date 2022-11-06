@@ -3,7 +3,8 @@ import Auth from "@/views/Auth.vue";
 import Dashboard from "@/views/Dashboard.vue";
 import Providers from "@/views/Providers.vue";
 import Clients from "@/views/Clients.vue";
-import Requests from "@/views/Equipments.vue";
+import Requests from "@/views/Orders.vue";
+import Materials from "@/views/Materials.vue";
 import Equipments from "@/views/Equipments.vue";
 import SignIn from "@/views/SignIn.vue";
 import SignUp from "@/views/SignUp.vue";
@@ -33,6 +34,11 @@ const routes = [
     path: "/fornecedores",
     name: "Fornecedores",
     component: Providers,
+  },
+  {
+    path: "/materiais",
+    name: "Materiais",
+    component: Materials,
   },
   {
     path: "/pedidos",

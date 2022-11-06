@@ -205,6 +205,30 @@
     <label for="mass">Adicionar em massa</label>
     <button class="addItem" @click="addClient()">Adicionar</button>
   </div>
+  <nav
+        class="pagination"
+        role="navigation"
+        aria-label="pagination"
+      >
+        <ul class="pagination-list">
+          <li>
+            <a @click="prev">&laquo;</a>
+          </li>
+          <li  v-for="element in arrayLength"
+              :key="element">
+            <span
+              class="pagination-link go-to has-text-orange"
+              :class="{active: current == element}"
+              aria-label="Goto page 1"
+              @click="current = element"
+              >{{ element }}</span
+            >
+          </li>
+          <li>
+            <a @click="next()">&raquo;</a>
+          </li>
+        </ul>
+      </nav>
 </template>
 
 <script>
@@ -234,6 +258,8 @@ export default {
       clienteCpfCnpj: '',
       categoryNameSearchString: '',
       massClients: [],
+      current: 1,
+      pageSize: 5,
     };
   },
   mounted: function () {
@@ -243,18 +269,38 @@ export default {
     filteredClients() {
         var filtered = this.clientes
         var categoryNameSearchString = this.categoryNameSearchString.toLowerCase()
-        if(!categoryNameSearchString) {
-            return filtered
+        if (categoryNameSearchString) {
+          filtered = filtered.filter(function(item){
+              if(item.nome.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.estado.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.cpf_cnpj.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.endereco.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.cidade.indexOf(categoryNameSearchString) !== -1) {
+                  return item
+              }
+          })
+          return filtered.slice(this.indexStart, this.indexEnd);
+        }else {
+          return filtered.slice(this.indexStart, this.indexEnd);
         }
-        filtered = filtered.filter(function(item){
-            if(item.nome.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.estado.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.cpf_cnpj.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.endereco.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.cidade.indexOf(categoryNameSearchString) !== -1) {
-                return item
-            }
-        })
-        return filtered
     },
+    indexStart() {
+      return (this.current - 1) * this.pageSize;
+    },
+    indexEnd() {
+      return this.indexStart + this.pageSize;
+    },
+    arrayLength() {
+      return Math.ceil(this.clientes.length / this.pageSize)
+    }
   },
   methods: {
+    prev() {
+      if (this.current > 1) {
+        this.current--;
+      }
+    },
+    next() {
+      if (this.current < Math.ceil(this.clientes.length % this.pageSize)){
+        this.current++;
+      }
+    },
     getTableList: function () {
       axios
         .get("http://localhost:3001/get-clientes", {

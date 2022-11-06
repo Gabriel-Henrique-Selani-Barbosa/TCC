@@ -51,8 +51,9 @@ app.post("/register", (req, res) => {
       await actual_schema.query(`INSERT INTO ${nome_empresa}.usuarios (email, senha, user_nivel) VALUES($1, $2, $3)`, [email, password, "admin"]);
       await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_client (client_id SERIAL PRIMARY KEY, cpf_cnpj VARCHAR(50) NOT NULL, nome VARCHAR(50), endereco VARCHAR(50), num VARCHAR(50), cidade VARCHAR (50), estado VARCHAR(50))`);
       await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_fornecedor (id_fornecedor SERIAL PRIMARY KEY, cpf_cnpj VARCHAR(50) NOT NULL, nome VARCHAR(50), produto VARCHAR(50))`);
-      await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_equip (equip_id SERIAL PRIMARY KEY, CONSTRAINT id_fornecedor FOREIGN KEY(equip_id) REFERENCES ${nome_empresa}.tb_fornecedor (id_fornecedor), categoria VARCHAR(50) NOT NULL, marca VARCHAR(50), modelo VARCHAR(50), preco VARCHAR(50))`);
-      await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_pedido (pedido_id SERIAL PRIMARY KEY, servico VARCHAR(50), valor INT, data_pedido DATE, observação VARCHAR (50))`);
+      await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_equip (equip_id SERIAL PRIMARY KEY, fornecedor VARCHAR(100), categoria VARCHAR(50) NOT NULL, marca VARCHAR(50), modelo VARCHAR(50), preco VARCHAR(50))`);
+      await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_material (material_id SERIAL PRIMARY KEY, fornecedor VARCHAR(100), categoria VARCHAR(100) NOT NULL, nome VARCHAR(100), preco VARCHAR(50))`);
+      await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_pedido (pedido_id SERIAL PRIMARY KEY, cpf_cnpj VARCHAR(50), material VARCHAR(100), quantidade VARCHAR(100), equipamento VARCHAR(100), quantidadeEquipamento VARCHAR(100))`);
       return true;
     } catch (error) {
       console.error(error.stack);
@@ -103,46 +104,6 @@ app.post("/login", (req, res) => {
   })
 });
 
-// app.post("/registrar-equipamento", (req, res) => {
-//   const nome_empresa = req.body.nome_empresa;
-//   const db = new Client({
-//     user: 'postgres',
-//     host: 'localhost',
-//     password: '1574857',
-//     port: 5432,
-//     database: "postgres",
-//   })
-//   const cliente = req.body.nome_cliente;
-//   const condominio = req.body.condominio;
-//   const terreno = req.body.terreno;
-//   const metragem = req.body.metragem;
-//   const razao = req.body.razaosocial;
-//   const datade = req.body.datade;
-//   const para = req.body.para;
-//   const ndocumento = req.body.ndocumento;
-//   const valor = req.body.valor;
-//   const envioboleto = req.body.envioboleto;
-//   const centrodecusto = req.body.centrodecusto;
-//   const observacao = req.body.obersao;
-//   const insertEquip = async () => {
-//     try {
-//       await db.connect();
-//       await db.query(`INSERT INTO ${nome_empresa}.tb_equip (cliente, condominio, terreno, metragem, razao, datade, para, numerodocumento, valor, envioboleto, centrodecusto, observacao), VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`, [cliente, condominio, terreno, metragem, razao, datade, para, ndocumento, valor, envioboleto, centrodecusto, observacao]);
-//       return true;
-//     } catch (error) {
-//       console.error(error.stack);
-//       return false;
-//     } finally {
-//       await db.end();
-//     }
-//   }
-
-//   insertEquip().then((result) => {
-//     if (result) {
-//       console.log('logado');
-//     }
-//   })
-// });
 
 app.post("/registar-maodeobra", (req, res) => {
   const nome_empresa = req.body.nome_empresa;
@@ -238,12 +199,53 @@ app.post("/delete-pedidos", (req, res) => {
   })
 })
 
+app.post("/register-mass-pedidos", (req, res) => {
+  const nome_empresa = req.body.storeName;
+  const massProviders = req.body.equipamentos;
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  });
+  const insetInMass = async () => {
+    try {
+      await db.connect();
+      for (i = 0; i < massProviders.length; i++) {
+        const cpfcnpj = massProviders[i][0];
+        const material = massProviders[i][1];
+        const quantidade = massProviders[i][2];
+        const equipamento = massProviders[i][3];
+        const quantidadeequipamento = massProviders[i][4];
+        const result = await db.query(`INSERT INTO ${nome_empresa}.tb_pedido (cpf_cnpj, material, quantidade, equipamento, quantidadeequipamento) VALUES ($1, $2, $3, $4, $5)`, [cpfcnpj, material, quantidade, equipamento, quantidadeequipamento])
+        if (i == massProviders.length - 1) {
+          if (result) {
+            res.send('registrado');
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  insetInMass().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
+})
+
 app.post("/registrar-pedidos", (req, res) => {
   const nome_empresa = req.body.storeName;
-  const servico = req.body.servico;
-  const valor = req.body.valor;
-  const data_pedido = req.body.datapedido;
-  const observacao = req.body.observacao;
+  const cpfcnpj = req.body.cpfcnpj;
+  const material = req.body.material;
+  const quantidade = req.body.quantidade;
+  const equipamento = req.body.equipamento;
+  const quantidadeequipamento = req.body.quantidadeequipamento;
   const db = new Client({
     user: 'postgres',
     host: 'localhost',
@@ -254,7 +256,10 @@ app.post("/registrar-pedidos", (req, res) => {
   const insertPedidos = async () => {
     try {
       await db.connect();
-      await db.query(`INSERT INTO ${nome_empresa}.tb_pedido (servico, valor, data_pedido, observação) VALUES ($1, $2, $3, $4)`, [servico, valor, data_pedido, observacao])
+      const result = await db.query(`INSERT INTO ${nome_empresa}.tb_pedido (cpf_cnpj, material, quantidade, equipamento, quantidadeequipamento) VALUES ($1, $2, $3, $4, $5)`, [cpfcnpj, material, quantidade, equipamento, quantidadeequipamento])
+      if (result) {
+        res.send("registrado")
+      }
     } catch (error) {
       console.error(error.stack);
       return false;
@@ -263,6 +268,73 @@ app.post("/registrar-pedidos", (req, res) => {
     }
   }
   insertPedidos().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
+})
+
+app.get("/get-materiais", (req, res) => {
+  const nome_empresa = req.query.storeName;
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  });
+  const getMateriais = async () => {
+    try {
+      await db.connect();
+      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_material`);
+      if (result) {
+        res.send(result);
+      }else {
+        res.send("no results found");
+      }
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  getMateriais().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
+});
+
+app.post("/update-materiais", (req, res) => {
+  const nome_empresa = req.body.storeName;
+  const fornecedor = req.body.fornecedor;
+  const id_material = req.body.id;
+  const categoria = req.body.categoria;
+  const nome = req.body.nome;
+  const preco = req.body.preco;
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  });
+  const updateMaterial = async () => {
+    try {
+      await db.connect();
+      const result = await db.query(`UPDATE ${nome_empresa}.tb_material SET "fornecedor" = $1, "categoria" = $2, "nome" = $3, "preco" = $4 WHERE material_id in ($5)`, [fornecedor, categoria, nome, preco, id_material]);
+      if (result) {
+        res.send("atualizado")
+      }
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  updateMaterial().then((result) => {
     if (result) {
       console.log('logado');
     }
@@ -300,6 +372,79 @@ app.get("/get-equipamentos", (req, res) => {
     }
   })
 });
+
+app.post("/registrar-materiais", (req, res) => {
+  const nome_empresa = req.body.storeName;
+  const fornecedor = req.body.fornecedor
+  const categoria = req.body.categoria
+  const nome = req.body.nome
+  const preco = req.body.preco
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  })
+  const registerEquip = async () => {
+    try {
+      await db.connect();
+      const result = await db.query(`INSERT INTO ${nome_empresa}.tb_material (fornecedor, categoria, nome, preco) VALUES ($1, $2, $3, $4)`, [fornecedor, categoria, nome, preco])
+      if (result) {
+        res.send('registrado')
+      }
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  registerEquip().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
+})
+
+app.post("/register-mass-materiais", (req, res) => {
+  const nome_empresa = req.body.storeName;
+  const massProviders = req.body.equipamentos;
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  });
+  const insetInMass = async () => {
+    try {
+      await db.connect();
+      for (i = 0; i < massProviders.length; i++) {
+        const fornecedor = massProviders[i][0];
+        const categoria = massProviders[i][1];
+        const nome = massProviders[i][2];
+        const preco = massProviders[i][3];
+        const result = await db.query(`INSERT INTO ${nome_empresa}.tb_material (material_id, categoria, nome, preco) VALUES ($1, $2, $3, $4)`, [fornecedor, categoria, nome, preco]);
+        if (i == massProviders.length - 1) {
+          if (result) {
+            res.send('registrado');
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  insetInMass().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
+})
 
 app.post("/update-equipamentos", (req, res) => {
   const nome_empresa = req.body.storeName;

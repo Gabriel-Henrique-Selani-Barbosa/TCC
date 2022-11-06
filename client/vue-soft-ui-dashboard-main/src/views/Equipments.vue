@@ -36,12 +36,17 @@
               <th
                 class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
               >
+                Fornecedor
+              </th>
+              <th
+                class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"
+              >
                 Categoria
               </th>
               <th
                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
               >
-                Narca
+                Marca
               </th>
               <th
                 class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
@@ -71,6 +76,15 @@
                   type="text"
                   v-model="equipamentoCategoria"
                   :placeholder="equipamento.categoria"
+                />
+                <p v-else class="text-xs font-weight-bold mb-0">{{ equipamento.categoria }}</p>
+              </td>
+              <td>
+                <input
+                  v-if="editEquipamento === equipamento.equip_id"
+                  type="text"
+                  v-model="equipamentoFornecedor"
+                  :placeholder="equipamento.fornecedor"
                 />
                 <p v-else class="text-xs font-weight-bold mb-0">{{ equipamento.categoria }}</p>
               </td>
@@ -134,6 +148,14 @@
     v-if="addEquipScreen"
   >
   <div class="close" @click="addEquipScreen = false"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAABzUlEQVRYhe3Wy27TYBAF4A+2ZAkRECpuFeVdemFL6RMAZYHaF2FHEQ9QhRYJBDwILCo2sKDsoV2FEMzin8iRaxzbKeqiPZKl5J8zM8dje2Y4w2nHuYb8OdzDIm7Ef/iGr3iPN9g/LoFj9LCFIbIp1wh9XD+u5Cs4iOADbOM+FnAhrgWshm0Q3AMsz5r8iXRHmXRXN2v43MKOvBrrbZOvRIDfeNrCfyN8R1pUoicve5vkkyIy/MSVJo4v5WWfFbsRa6uuw5xUuoHyZ/4Q3ZLzbtiKuB2xhlJlp2JdUrxdYnsUtk8FEd04y4JTRL/CdgQfgrxaYptMNBZRdlbEWtjf1RHwOch3/mEvJpyWnNQnMuzVEXAY5E4F5xI+yrvfHi5X8DvBOywazpeQszoqS1A1V8Z5/tQJdOKP4MRfwsf+32dY1ieO4JrUNAbSYCmiaSOa17ARwQtJ8U5dhwq8jljPmzhdlQ+jjRmSb0aMH6o/01Isy8dxGxGb8nG82MIfaS6MF5JdabBMw7y87CPppZ4JS9I8H69kfTzAXanDdeL3Gl7hl7zsre+8iIt4pt5SOpRmf60FpOla3pNWtSVpV5hcy79Ia/lbfG8Y9wynGH8BHnKpr/YwVJ8AAAAASUVORK5CYII="></div>
+  <div style="width: 199px">
+    <label>Fornecedor:</label>
+    <v-select
+        :options="fornecedores"
+        label="nome"
+        v-model="equipProvider"
+    ></v-select>
+  </div>
     <div>
         <label>Categoria:</label>
         <input v-model="equipCategoria">
@@ -155,6 +177,30 @@
     <input type="file" id="mass" @change="onFileChange" style="display: none"/>
     <label for="mass">Adicionar em massa</label>
   </div>
+  <nav
+        class="pagination"
+        role="navigation"
+        aria-label="pagination"
+      >
+        <ul class="pagination-list">
+          <li>
+            <a @click="prev">&laquo;</a>
+          </li>
+          <li  v-for="element in arrayLength"
+              :key="element">
+            <span
+              class="pagination-link go-to has-text-orange"
+              :class="{active: current == element}"
+              aria-label="Goto page 1"
+              @click="current = element"
+              >{{ element }}</span
+            >
+          </li>
+          <li>
+            <a @click="next()">&raquo;</a>
+          </li>
+        </ul>
+      </nav>
 </template>
 
 <script>
@@ -167,34 +213,49 @@ export default {
   data() {
     return {
       equipamentos: [],
+      fornecedores: [],
       storeName: localStorage.getItem('store'),
       equipCategoria: '',
       equiMarca: '',
       equiModelo: '',
       equipPreco: '',
+      equipProvider: '',
       addEquipScreen: false,
       editEquipamento: '',
       equipamentoModelo: '',
       equipamentoCategoria: '',
       equipamentoMarca: '',
       equipamentoPreco: '',
+      equipamentoFornecedor: '',
       categoryNameSearchString: '',
+      current: 1,
+      pageSize: 5,
     };
   },
   computed: {
     filteredEquipements() {
         var filtered = this.equipamentos
         var categoryNameSearchString = this.categoryNameSearchString.toLowerCase()
-        if(!categoryNameSearchString) {
-            return filtered
-        }
-        filtered = filtered.filter(function(item){
+        if(categoryNameSearchString) {
+          filtered = filtered.filter(function(item){
             if(item.categoria.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.modelo.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.preco.toLowerCase().indexOf(categoryNameSearchString) !== -1) {
                 return item
             }
-        })
-        return filtered
+          })
+          return filtered.slice(this.indexStart, this.indexEnd);
+        }else {
+          return filtered.slice(this.indexStart, this.indexEnd);
+        }
     },
+    indexStart() {
+      return (this.current - 1) * this.pageSize;
+    },
+    indexEnd() {
+      return this.indexStart + this.pageSize;
+    },
+    arrayLength() {
+      return Math.ceil(this.equipamentos.length / this.pageSize)
+    }
 },
   created() {
     if (!localStorage.getItem("store")) {
@@ -203,8 +264,33 @@ export default {
   },
   mounted: function () {
     this.getTableList();
+    this.getProviders();
   },
   methods: {
+    prev() {
+      if (this.current > 1) {
+        this.current--;
+      }
+    },
+    next() {
+      if (this.current < Math.ceil(this.equipamentos.length / this.pageSize)){
+        this.current++;
+      }
+    },
+    getProviders: function() {
+        axios
+            .get("http://localhost:3001/get-fornecedores/", {
+                params: {
+                    storeName: this.storeName
+                }
+            })
+            .then((res) => {
+                this.fornecedores = res.data.rows;
+            })
+            .catch((error) => {
+            console.log(error);
+            });
+      },
     getTableList: function () {
       axios
         .get("http://localhost:3001/get-equipamentos/", {
@@ -250,6 +336,7 @@ export default {
       axios
         .post('http://localhost:3001/registrar-equipamentos', {
             storeName: this.storeName,
+            fornecedor: this.equipProvider.nome,
             categoria: this.equipCategoria,
             marca: this.equiMarca,
             modelo: this.equiModelo,
@@ -257,6 +344,7 @@ export default {
         })
         .then(() => {
             this.equipCategoria = '';
+            this.equipProvider = '';
             this.equiMarca = '';
             this.equiModelo = '';
             this.addEquipScreen = false;
@@ -274,6 +362,7 @@ export default {
         .post("http://localhost:3001/update-equipamentos", {
           storeName: this.storeName,
           id: providerid,
+          fornecedor: this.equipamentoFornecedor,
           categoria: this.equipamentoCategoria,
           marca: this.equipamentoMarca,
           modelo: this.equipamentoModelo,
@@ -283,6 +372,7 @@ export default {
           this.equipamentoModelo = '';
           this.equipamentoMarca = '';
           this.equipamentoCategoria = '';
+          this.equipamentoFornecedor = '';
           this.equipamentoPreco = '';
           this.editEquipamento = '';
           this.getTableList();

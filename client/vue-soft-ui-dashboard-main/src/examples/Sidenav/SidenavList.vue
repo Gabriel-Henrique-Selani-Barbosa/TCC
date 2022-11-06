@@ -19,6 +19,13 @@
         </sidenav-collapse>
       </li>
       <li class="nav-item">
+        <sidenav-collapse navText="Fornecedores" :to="{ name: 'Fornecedores' }">
+          <template #icon>
+            <icon icon="book" />
+          </template>
+        </sidenav-collapse>
+      </li>
+      <li class="nav-item">
         <sidenav-collapse navText="Equipamentos" :to="{ name: 'Equipamentos' }">
           <template #icon>
             <icon icon="tools" />
@@ -26,7 +33,7 @@
         </sidenav-collapse>
       </li>
       <li class="nav-item">
-        <sidenav-collapse navText="Fornecedores" :to="{ name: 'Fornecedores' }">
+        <sidenav-collapse navText="Materiais" :to="{ name: 'Materiais' }">
           <template #icon>
             <icon icon="book" />
           </template>

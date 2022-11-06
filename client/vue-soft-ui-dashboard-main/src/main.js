@@ -8,9 +8,12 @@ import SoftUIDashboard from "./soft-ui-dashboard";
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueSweetalert2 from 'vue-sweetalert2';
+import vSelect from "vue-select";
 import 'sweetalert2/dist/sweetalert2.min.css';
+import "vue-select/dist/vue-select.css";
 
 const appInstance = createApp(App);
+appInstance.component("v-select", vSelect);
 appInstance.use(VueAxios, axios)
 appInstance.use(store);
 appInstance.use(router);
