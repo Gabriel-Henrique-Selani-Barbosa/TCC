@@ -218,7 +218,7 @@
           var categoryNameSearchString = this.categoryNameSearchString.toLowerCase()
           if(categoryNameSearchString) {
             filtered = filtered.filter(function(item){
-              if(item.categoria.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.modelo.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.preco.toLowerCase().indexOf(categoryNameSearchString) !== -1) {
+              if(item.categoria.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.fornecedor.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.nome.toLowerCase().indexOf(categoryNameSearchString) !== -1) {
                   return item
               }
             })

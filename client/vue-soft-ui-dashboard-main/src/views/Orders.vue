@@ -251,7 +251,7 @@
           var categoryNameSearchString = this.categoryNameSearchString.toLowerCase()
           if(categoryNameSearchString) {
             filtered = filtered.filter(function(item){
-              if(item.categoria.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.modelo.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.preco.toLowerCase().indexOf(categoryNameSearchString) !== -1) {
+              if(item.cpf_cnpj.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.material.toLowerCase().indexOf(categoryNameSearchString) !== -1 || item.equipamento.toLowerCase().indexOf(categoryNameSearchString) !== -1) {
                   return item
               }
             })
