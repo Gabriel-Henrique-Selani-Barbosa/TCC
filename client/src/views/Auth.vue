@@ -1,4 +1,5 @@
 <template>
+  <div style="display: flex; width: 100%; height: 100vh; justify-content: center; align-items: center;">
   <div class="container">
     <div class="blueBg">
         <div class="box signin">
@@ -18,7 +19,6 @@
                 <input type="text" placeholder="Seu nome" v-model="username">
                 <input type="password" placeholder="Sua senha" v-model="password">
                 <input type="submit" value="Login" @click="login()">
-                <a href="#" class="forgot">Esqueci minha senha</a>
             </form>
         </div>
         <div class="form signupForm">
@@ -27,16 +27,18 @@
                 <input type="text" placeholder="Sua loja" v-model="storeName">
                 <input type="text" placeholder="Seu nome" v-model="username">
                 <input type="password" placeholder="Sua senha" v-model="password">
-                <input type="password" placeholder="Confirmar senha">
+                <input type="password" placeholder="Confirmar senha" v-model="confirmPassword">
                 <input type="submit" value="Cadastrar-se" @click="register()">
             </form>
         </div>
     </div>
 </div>
+</div>
 </template>
 
 <script>
 import axios from "axios";
+import { mapMutations } from "vuex";
 export default {
 name: "auth",
 data() {
@@ -44,11 +46,21 @@ data() {
     rememberMe: false,
     username: "",
     password: "",
+    confirmPassword: "",
     storeName: "",
     screen: false,
   };
 },
-methods: { 
+created() {
+    this.toggleEveryDisplay();
+    this.toggleHideConfig();
+  },
+  beforeUnmount() {
+    this.toggleEveryDisplay();
+    this.toggleHideConfig();
+  },
+methods: {
+  ...mapMutations(["toggleEveryDisplay", "toggleHideConfig"]),
   isRememberMe() {
     return this.rememberMe === true;
   },
@@ -72,7 +84,8 @@ methods: {
       });
   },
   register() {
-     axios
+    if (this.password == this.confirmPassword) {
+      axios
       .post("http://localhost:3001/register/", {
           storeName: this.storeName,
           username: this.username,
@@ -80,12 +93,18 @@ methods: {
       })
       .then((res) => {
           if (res.data == "Usuario cadastrado com sucesso") {
-              alert('go porra')
+            localStorage.setItem('store', this.storeName)
+            localStorage.setItem('user', this.username)
+            this.$router.push({name:'Dashboard'})
           }
       })
       .catch((err) => {
         alert(err);
       });
+    }else {
+      alert('As senhas nao correspondem')
+    }
+
   }
 }
 };

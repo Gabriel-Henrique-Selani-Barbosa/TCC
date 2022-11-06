@@ -297,7 +297,7 @@ export default {
       }
     },
     next() {
-      if (this.current < Math.ceil(this.clientes.length % this.pageSize)){
+      if (this.current < Math.ceil(this.clientes.length / this.pageSize)){
         this.current++;
       }
     },

@@ -17,6 +17,7 @@
     </div>
     <hr class="mt-0 horizontal dark" />
     <sidenav-list :cardBg="customClass" />
+    <span style="position: absolute; bottom: 0;">Bem vindo {{ user }}, <b style="cursor: pointer" @click="logout()">sair ?</b></span>
   </aside>
 </template>
 <script>
@@ -32,7 +33,13 @@ export default {
   data() {
     return {
       logo,
+      user: '',
     };
+  },
+  created() {
+    if (localStorage.getItem("user")) {
+      this.user = localStorage.getItem("user")
+    }
   },
   props: {
     customClass: {
@@ -43,5 +50,11 @@ export default {
   computed: {
     ...mapState(["isRTL"]),
   },
+  methods: {
+    logout() {
+      localStorage.clear();
+      this.$router.push({name:'/'})
+    }
+  }
 };
 </script>
