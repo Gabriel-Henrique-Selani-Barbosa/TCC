@@ -49,9 +49,9 @@ app.post("/register", (req, res) => {
       await actual_schema.connect();
       await actual_schema.query(`CREATE TABLE ${nome_empresa}.usuarios (usuario_id SERIAL PRIMARY KEY, email VARCHAR(50) NOT NULL, senha VARCHAR(255) NOT NULL, user_nivel VARCHAR(6) NOT NULL)`);
       await actual_schema.query(`INSERT INTO ${nome_empresa}.usuarios (email, senha, user_nivel) VALUES($1, $2, $3)`, [email, password, "admin"]);
-      await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_client (client_id SERIAL PRIMARY KEY, cpf_cnpj VARCHAR(50) NOT NULL, nome VARCHAR(50), endereco VARCHAR(50), num INTEGER, cidade VARCHAR (50), estado VARCHAR(50))`);
+      await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_client (client_id SERIAL PRIMARY KEY, cpf_cnpj VARCHAR(50) NOT NULL, nome VARCHAR(50), endereco VARCHAR(50), num VARCHAR(50), cidade VARCHAR (50), estado VARCHAR(50))`);
       await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_fornecedor (id_fornecedor SERIAL PRIMARY KEY, cpf_cnpj VARCHAR(50) NOT NULL, nome VARCHAR(50), produto VARCHAR(50))`);
-      await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_equip (equip_id SERIAL PRIMARY KEY, CONSTRAINT id_fornecedor FOREIGN KEY(equip_id) REFERENCES ${nome_empresa}.tb_fornecedor (id_fornecedor), categoria VARCHAR(50) NOT NULL, marca VARCHAR(50), modelo VARCHAR(50), preco INTEGER)`);
+      await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_equip (equip_id SERIAL PRIMARY KEY, CONSTRAINT id_fornecedor FOREIGN KEY(equip_id) REFERENCES ${nome_empresa}.tb_fornecedor (id_fornecedor), categoria VARCHAR(50) NOT NULL, marca VARCHAR(50), modelo VARCHAR(50), preco VARCHAR(50))`);
       await actual_schema.query(`CREATE TABLE ${nome_empresa}.tb_pedido (pedido_id SERIAL PRIMARY KEY, servico VARCHAR(50), valor INT, data_pedido DATE, observação VARCHAR (50))`);
       return true;
     } catch (error) {
@@ -103,46 +103,46 @@ app.post("/login", (req, res) => {
   })
 });
 
-app.post("/registrar-equipamento", (req, res) => {
-  const nome_empresa = req.body.nome_empresa;
-  const db = new Client({
-    user: 'postgres',
-    host: 'localhost',
-    password: '1574857',
-    port: 5432,
-    database: "postgres",
-  })
-  const cliente = req.body.nome_cliente;
-  const condominio = req.body.condominio;
-  const terreno = req.body.terreno;
-  const metragem = req.body.metragem;
-  const razao = req.body.razaosocial;
-  const datade = req.body.datade;
-  const para = req.body.para;
-  const ndocumento = req.body.ndocumento;
-  const valor = req.body.valor;
-  const envioboleto = req.body.envioboleto;
-  const centrodecusto = req.body.centrodecusto;
-  const observacao = req.body.obersao;
-  const insertEquip = async () => {
-    try {
-      await db.connect();
-      await db.query(`INSERT INTO ${nome_empresa}.tb_equip (cliente, condominio, terreno, metragem, razao, datade, para, numerodocumento, valor, envioboleto, centrodecusto, observacao), VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`, [cliente, condominio, terreno, metragem, razao, datade, para, ndocumento, valor, envioboleto, centrodecusto, observacao]);
-      return true;
-    } catch (error) {
-      console.error(error.stack);
-      return false;
-    } finally {
-      await db.end();
-    }
-  }
+// app.post("/registrar-equipamento", (req, res) => {
+//   const nome_empresa = req.body.nome_empresa;
+//   const db = new Client({
+//     user: 'postgres',
+//     host: 'localhost',
+//     password: '1574857',
+//     port: 5432,
+//     database: "postgres",
+//   })
+//   const cliente = req.body.nome_cliente;
+//   const condominio = req.body.condominio;
+//   const terreno = req.body.terreno;
+//   const metragem = req.body.metragem;
+//   const razao = req.body.razaosocial;
+//   const datade = req.body.datade;
+//   const para = req.body.para;
+//   const ndocumento = req.body.ndocumento;
+//   const valor = req.body.valor;
+//   const envioboleto = req.body.envioboleto;
+//   const centrodecusto = req.body.centrodecusto;
+//   const observacao = req.body.obersao;
+//   const insertEquip = async () => {
+//     try {
+//       await db.connect();
+//       await db.query(`INSERT INTO ${nome_empresa}.tb_equip (cliente, condominio, terreno, metragem, razao, datade, para, numerodocumento, valor, envioboleto, centrodecusto, observacao), VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`, [cliente, condominio, terreno, metragem, razao, datade, para, ndocumento, valor, envioboleto, centrodecusto, observacao]);
+//       return true;
+//     } catch (error) {
+//       console.error(error.stack);
+//       return false;
+//     } finally {
+//       await db.end();
+//     }
+//   }
 
-  insertEquip().then((result) => {
-    if (result) {
-      console.log('logado');
-    }
-  })
-});
+//   insertEquip().then((result) => {
+//     if (result) {
+//       console.log('logado');
+//     }
+//   })
+// });
 
 app.post("/registar-maodeobra", (req, res) => {
   const nome_empresa = req.body.nome_empresa;
@@ -303,11 +303,11 @@ app.get("/get-equipamentos", (req, res) => {
 
 app.post("/update-equipamentos", (req, res) => {
   const nome_empresa = req.body.storeName;
-  const id_equip = req.body.equipamentoId
-  const equipamentoCategoria = req.body.equipamentoCategoria
-  const equipamentoMarca = req.body.equipamentoMarca
-  const equipamentoModelo = req.body.equipamentoModelo
-  const equipamentoPreco = req.body.equipamentoPreco
+  const id_equip = req.body.id
+  const equipamentoCategoria = req.body.categoria
+  const equipamentoMarca = req.body.marca
+  const equipamentoModelo = req.body.modelo
+  const equipamentoPreco = req.body.preco
   const db = new Client({
     user: 'postgres',
     host: 'localhost',
@@ -318,7 +318,10 @@ app.post("/update-equipamentos", (req, res) => {
   const updateEquip = async () => {
     try {
       await db.connect();
-      await db.query(`UPDATE ${nome_empresa}.tb_equip SET "categoria" = $1, "marca" = $2, "modelo" = $3, "preco" = $4 WHERE equip_id in ($5)`, [equipamentoCategoria, equipamentoMarca, equipamentoModelo, equipamentoPreco, id_equip]);
+      const result = await db.query(`UPDATE ${nome_empresa}.tb_equip SET "categoria" = $1, "marca" = $2, "modelo" = $3, "preco" = $4 WHERE equip_id in ($5)`, [equipamentoCategoria, equipamentoMarca, equipamentoModelo, equipamentoPreco, id_equip]);
+      if (result) {
+        res.send("atualizado")
+      }
     } catch (error) {
       console.error(error.stack);
       return false;
@@ -373,11 +376,14 @@ app.post("/registrar-equipamentos", (req, res) => {
     password: '1574857',
     port: 5432,
     database: "postgres",
-  });
-  const insertEquip = async () => {
+  })
+  const registerEquip = async () => {
     try {
       await db.connect();
-      await db.query(`INSERT INTO ${nome_empresa}.tb_equip (categoria, marca, modelo, preco) VALUES ($1, $2, $3, $4)`, [categoria, marca, modelo, preco])
+      const result = await db.query(`INSERT INTO ${nome_empresa}.tb_equip (categoria, marca, modelo, preco) VALUES ($1, $2, $3, $4)`, [categoria, marca, modelo, preco])
+      if (result) {
+        res.send('registrado')
+      }
     } catch (error) {
       console.error(error.stack);
       return false;
@@ -385,7 +391,46 @@ app.post("/registrar-equipamentos", (req, res) => {
       await db.end();
     }
   }
-  insertEquip().then((result) => {
+  registerEquip().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
+})
+
+app.post("/register-mass-equipamentos", (req, res) => {
+  const nome_empresa = req.body.storeName;
+  const massProviders = req.body.equipamentos;
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  });
+  const insetInMass = async () => {
+    try {
+      await db.connect();
+      for (i = 0; i < massProviders.length; i++) {
+        const categoria = massProviders[i][0];
+        const marca = massProviders[i][1];
+        const modelo = massProviders[i][2];
+        const preco = massProviders[i][3];
+        const result = await db.query(`INSERT INTO ${nome_empresa}.tb_equip (categoria, marca, modelo, preco) VALUES ($1, $2, $3, $4)`, [categoria, marca, modelo, preco]);
+        if (i == massProviders.length - 1) {
+          if (result) {
+            res.send('registrado');
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  insetInMass().then((result) => {
     if (result) {
       console.log('logado');
     }
@@ -404,7 +449,7 @@ app.get("/get-fornecedores", (req, res) => {
   const getFornecedores = async () => {
     try {
       await db.connect();
-      const result = await db.query(`SELECT * ${nome_empresa}.tb_fornecedor`)
+      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_fornecedor`)
       if (result) {
         res.send(result);
       }else {
@@ -424,9 +469,43 @@ app.get("/get-fornecedores", (req, res) => {
   })
 });
 
+app.post("/update-fornecedores", (req, res) => {
+  const nome_empresa = req.body.storeName;
+  const id_fornecedor = req.body.id;
+  const nome = req.body.nome;
+  const cnpjcpf = req.body.cnpjcpf;
+  const produto = req.body.produto;
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  });
+  const updateEquip = async () => {
+    try {
+      await db.connect();
+      const result = await db.query(`UPDATE ${nome_empresa}.tb_fornecedor SET "cpf_cnpj" = $1, "nome" = $2, "produto" = $3 WHERE id_fornecedor in ($4)`, [cnpjcpf, nome, produto, id_fornecedor]);
+      if(result) {
+        res.send("editado")
+      }
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  updateEquip().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
+})
+
 app.post("/delete-fornecedores", (req, res) => {
   const nome_empresa = req.body.storeName;
-  const id_fornecedor = req.body.cliente_id;
+  const id_fornecedor = req.body.id_fornecedor;
   const db = new Client({
     user: 'postgres',
     host: 'localhost',
@@ -437,7 +516,10 @@ app.post("/delete-fornecedores", (req, res) => {
   const deleteFornecedor = async () => {
     try {
       await db.connect();
-      await db.query(`DELETE FROM ${nome_empresa}.tb_fornecedor WHERE id_fornecedor in ($1})`, [id_fornecedor])
+      const result = await db.query(`DELETE FROM ${nome_empresa}.tb_fornecedor WHERE id_fornecedor = $1`, [id_fornecedor])
+      if (result) {
+        console.log('deletado')
+      }
     } catch (error) {
       console.error(error.stack);
       return false;
@@ -467,7 +549,10 @@ app.post("/registrar-fornecedores", (req, res) => {
   const insertFornecedor = async () => {
     try {
       await db.connect();
-      await db.query(`INSERT INTO ${nome_empresa}.tb_fornecedor (cpf_cnpj, nome, produto) VALUES ($1, $2, $3)`, [cnpjcpf, nome, produto])
+      const result = await db.query(`INSERT INTO ${nome_empresa}.tb_fornecedor (cpf_cnpj, nome, produto) VALUES ($1, $2, $3)`, [cnpjcpf, nome, produto])
+      if (result) {
+        res.send("adicionado")
+      }
     } catch (error) {
       console.error(error.stack);
       return false;
@@ -476,6 +561,44 @@ app.post("/registrar-fornecedores", (req, res) => {
     }
   }
   insertFornecedor().then((result) => {
+    if (result) {
+      res.send("adicionado")
+    }
+  })
+})
+
+app.post("/register-mass-fornecedores", (req, res) => {
+  const nome_empresa = req.body.storeName;
+  const massProviders = req.body.providers;
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  });
+  const insetInMass = async () => {
+    try {
+      await db.connect();
+      for (i = 0; i < massProviders.length; i++) {
+        const nome = massProviders[i][0];
+        const cnpjcpf = massProviders[i][1];
+        const produto = massProviders[i][2];
+        const result = await db.query(`INSERT INTO ${nome_empresa}.tb_fornecedor (cpf_cnpj, nome, produto) VALUES ($1, $2, $3)`, [cnpjcpf, nome, produto]);
+        if (i == massProviders.length - 1) {
+          if (result) {
+            res.send('registrado');
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  insetInMass().then((result) => {
     if (result) {
       console.log('logado');
     }
@@ -494,7 +617,7 @@ app.get("/get-clientes", (req, res) => {
   const getClientes = async () => {
     try {
       await db.connect();
-      const result = await db.query(`SELECT * ${nome_empresa}.tb_cliente`)
+      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_client`)
       if (result) {
         res.send(result);
       }else {
@@ -514,20 +637,61 @@ app.get("/get-clientes", (req, res) => {
   })
 });
 
-app.post("/delete-clientes", (req, res) => {
+app.post("/update-clientes", (req, res) => {
   const nome_empresa = req.body.storeName;
-  const cliente_id = req.body.cliente_id
+  const id_client = req.body.id;
+  const nome = req.body.nome;
+  const cnpjcpf = req.body.cnpjcpf;
+  const estado = req.body.estado;
+  const cidade = req.body.cidade;
+  const endereco = req.body.endereco;
+  const numero = req.body.numero;
   const db = new Client({
     user: 'postgres',
     host: 'localhost',
     password: '1574857',
     port: 5432,
     database: "postgres",
+  });
+
+  const updateEquip = async () => {
+    try {
+      await db.connect();
+      const result = await db.query(`UPDATE ${nome_empresa}.tb_client SET "cpf_cnpj" = $1, "nome" = $2, "endereco" = $3, "num" = $4, "cidade" = $5, "estado" = $6 WHERE client_id in ($7)`, [cnpjcpf, nome, endereco, numero, cidade, estado, id_client]);
+      if(result) {
+        res.send("editado")
+      }
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  updateEquip().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
   })
+})
+
+app.post("/delete-clientes", (req, res) => {
+  const nome_empresa = req.body.storeName;
+  const cliente_id = req.body.client_id;
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  });
   const deleteCliente = async () => {
     try {
       await db.connect();
-      await db.query(`DELETE FROM ${nome_empresa}.tb_client WHERE client_id in ($1})`, [cliente_id])
+      const result = await db.query(`DELETE FROM ${nome_empresa}.tb_client WHERE client_id = $1`, [cliente_id])
+      if(result) {
+        res.send("deletado")
+      }
     } catch (error) {
       console.error(error.stack);
       return false;
@@ -536,6 +700,47 @@ app.post("/delete-clientes", (req, res) => {
     }
   }
   deleteCliente().then((result) => {
+    if (result) {
+      console.log('logado');
+    }
+  })
+})
+
+app.post("/register-mass-clientes", (req, res) => {
+  const nome_empresa = req.body.storeName;
+  const massClients = req.body.clientes;
+  const db = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    password: '1574857',
+    port: 5432,
+    database: "postgres",
+  });
+  const insetInMass = async () => {
+    try {
+      await db.connect();
+      for (i = 0; i < massClients.length; i++) {
+        const nome = massClients[i][0];
+        const cnpjcpf = massClients[i][1];
+        const estado = massClients[i][2];
+        const cidade = massClients[i][3];
+        const endereco = massClients[i][4];
+        const numero = massClients[i][5];
+        const result = await db.query(`INSERT INTO ${nome_empresa}.tb_client (cpf_cnpj, nome, endereco, num, cidade, estado) VALUES ($1, $2, $3, $4, $5, $6)`, [cnpjcpf, nome, endereco, numero, cidade, estado]);
+        if (i == massClients.length - 1) {
+          if (result) {
+            res.send('registrado');
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error.stack);
+      return false;
+    } finally {
+      await db.end();
+    }
+  }
+  insetInMass().then((result) => {
     if (result) {
       console.log('logado');
     }
@@ -560,7 +765,10 @@ app.post("/registrar-cliente", (req, res) => {
   const insertClient = async () => {
     try {
       await db.connect();
-      await db.query(`INSERT INTO ${nome_empresa}.tb_client (cpf_cnpj, nome, endereco, num, cidade, estado VALUES ($1, $2, $3, $4, $5, $6)`, [cnpjcpf, nome, endereco, numero, cidade, estado])
+      const result = await db.query(`INSERT INTO ${nome_empresa}.tb_client (cpf_cnpj, nome, endereco, num, cidade, estado) VALUES ($1, $2, $3, $4, $5, $6)`, [cnpjcpf, nome, endereco, numero, cidade, estado])
+      if (result) {
+        res.send('registrado')
+      }
     } catch (error) {
       console.error(error.stack);
       return false;
