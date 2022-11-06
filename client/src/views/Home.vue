@@ -1,36 +1,14 @@
 <template>
-    <div>
-      <Sidebar />
-      <div class="Sidebar">
-        testando
-      </div>
-    </div>
+  <default-dashboard />
 </template>
 
 <script>
-import Sidebar from '@/components/Menu/Sidebar.vue'
+import DefaultDashboard from "@/views/dashboards/Default.vue";
 
 export default {
-  name: 'Home',
-  props: {
-    store: String,
-    user: String
-  },  
+  name: "Home",
   components: {
-   Sidebar,
+    DefaultDashboard,
   },
-  created() {
-    localStorage.setItem('store', this.store)
-    localStorage.setItem('user', this.user)
-  },
-}
+};
 </script>
-
-<style>
-body,
-html {
-  padding: 0;
-  margin: 0;
-  height: 100%;
-}
-</style>

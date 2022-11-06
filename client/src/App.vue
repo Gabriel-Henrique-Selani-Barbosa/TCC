@@ -1,43 +1,53 @@
 <template>
-  <router-view/>
+  <sidenav
+    :custom_class="this.$store.state.mcolor"
+    :class="[
+      this.$store.state.isTransparent,
+      this.$store.state.isRTL ? 'fixed-end' : 'fixed-start',
+    ]"
+    v-if="this.$store.state.showSidenav"
+  />
+  <main
+    class="main-content position-relative max-height-vh-100 h-100 border-radius-lg"
+    :style="this.$store.state.isRTL ? 'overflow-x: hidden' : ''"
+  >
+    <!-- nav -->
+    <navbar
+      :class="[navClasses]"
+      :textWhite="this.$store.state.isAbsolute ? 'text-white opacity-8' : ''"
+      :minNav="navbarMinimize"
+      v-if="this.$store.state.showNavbar"
+    />
+    <router-view />
+    <app-footer v-show="this.$store.state.showFooter" />
+  </main>
 </template>
-
-<style lang="scss">
-.material-symbols-outlined {
-  font-weight: 300;
-}
-html[data-theme="light"] {
-     --background: #f8f9fa;
-     --border: #000;
-     --menuheader: #fff;
-}
-
-html[data-theme="dark"] {
-    --background: #000;
-    --border: #999;
-    --menuheader: #ccc;
-}
-:root {
-	--primary: #3b0266;
-	--primary-alt: #22c55e;
-	--grey: #64748b;
-	--dark: #1e293b;
-	--dark-alt: #334155;
-	--light: #f1f5f9;
-	--sidebar-width: 200px;
-  --white: #f1f5f9;
-  --whiteHover: #ffffff0d;
-}
-nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
-</style>
+<script>
+import Sidenav from "./examples/Sidenav";
+import Navbar from "@/examples/Navbars/Navbar.vue";
+import { mapMutations } from "vuex";
+export default {
+  name: "App",
+  components: {
+    Sidenav,
+    Navbar,
+  },
+  methods: {
+    ...mapMutations(["toggleConfigurator", "navbarMinimize"]),
+  },
+  computed: {
+    navClasses() {
+      return {
+        "position-sticky blur shadow-blur left-auto top-1 z-index-sticky": this
+          .$store.state.isNavFixed,
+        "position-absolute px-4 mx-0 w-100 z-index-2": this.$store.state
+          .isAbsolute,
+        "px-0 mx-4": !this.$store.state.isAbsolute,
+      };
+    },
+  },
+  beforeMount() {
+    this.$store.state.isTransparent = "bg-transparent";
+  },
+};
+</script>
