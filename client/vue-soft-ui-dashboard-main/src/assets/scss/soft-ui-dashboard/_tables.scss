@@ -91,3 +91,11 @@
   width: 250px;
   order: 1;
 }
+label[for="mass"] {
+  background: #eb9741;
+  color: #fff;
+  padding: 5px 10px;
+  border: none;
+  order: 3;
+  cursor: pointer;
+}

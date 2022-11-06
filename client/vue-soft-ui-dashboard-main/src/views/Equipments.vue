@@ -151,11 +151,17 @@
         <input v-model="equipPreco">
     </div>
     <button class="addItem" @click="addEquip()">Adicionar</button>
+
+    <input type="file" id="mass" @change="onFileChange" style="display: none"/>
+    <label for="mass">Adicionar em massa</label>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+import 'sweetalert2/src/sweetalert2.scss';
+import readXlsxFile from 'read-excel-file';
 export default {
   name: "authors-table",
   data() {
@@ -212,6 +218,30 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    onFileChange(event) {
+      let xlsxfile = event.target.files ? event.target.files[0] : null;
+      readXlsxFile(xlsxfile).then((rows) => {
+        axios
+          .post("http://localhost:3001/register-mass-equipamentos", {
+            storeName: this.storeName,
+            equipamentos: rows,
+          })
+          .then(() => {
+            this.getTableList();
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: 'Registro em massa feito com sucesso',
+              showConfirmButton: false,
+              timer: 1500
+            })
+            this.addEquipScreen = false
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
     },
     showAddEquip() {
       this.addEquipScreen = true

@@ -4,7 +4,6 @@
     @click="showAddClient()"
   >Adicionar cliente
   </button>
-  <input type="file" @change="onFileChange" />
     <div class="input-group live-search">
       <span class="input-group-text text-body"
         ><i class="fas fa-search" aria-hidden="true"></i
@@ -202,6 +201,8 @@
         <label>Numero:</label>
         <input v-model="clientNumero">
     </div>
+    <input type="file" id="mass" @change="onFileChange" style="display: none"/>
+    <label for="mass">Adicionar em massa</label>
     <button class="addItem" @click="addClient()">Adicionar</button>
   </div>
 </template>
@@ -263,7 +264,6 @@ export default {
         })
         .then((res) => {
             this.clientes = res.data.rows;
-            console.log(this.clientes)
         })
         .catch((error) => {
           console.log(error);
@@ -278,6 +278,7 @@ export default {
             clientes: rows,
           })
           .then(() => {
+            this.getTableList();
             Swal.fire({
               position: 'top-end',
               icon: 'success',
@@ -285,7 +286,7 @@ export default {
               showConfirmButton: false,
               timer: 1500
             })
-            this.getTableList();
+            this.addClientScreen = false
           })
           .catch((error) => {
             console.log(error);

@@ -130,12 +130,17 @@
         <label>Produto:</label>
         <input v-model="providerproduto">
     </div>
+    <input type="file" id="mass" @change="onFileChange" style="display: none"/>
+    <label for="mass">Adicionar em massa</label>
     <button class="addItem" @click="addProvider()">Adicionar</button>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+import 'sweetalert2/src/sweetalert2.scss';
+import readXlsxFile from 'read-excel-file';
 export default {
   name: "authors-table",
   data() {
@@ -185,6 +190,30 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    onFileChange(event) {
+      let xlsxfile = event.target.files ? event.target.files[0] : null;
+      readXlsxFile(xlsxfile).then((rows) => {
+        axios
+          .post("http://localhost:3001/register-mass-fornecedores", {
+            storeName: this.storeName,
+            providers: rows,
+          })
+          .then(() => {
+            this.getTableList();
+            Swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: 'Registro em massa feito com sucesso',
+              showConfirmButton: false,
+              timer: 1500
+            })
+            this.addProviderScreen = false
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
     },
     showAddProvider() {
       this.addProviderScreen = true
