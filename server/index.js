@@ -151,7 +151,7 @@ app.get("/get-pedidos", (req, res) => {
   const getPedidos = async () => {
     try {
       await db.connect();
-      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_pedido`);
+      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_pedido ORDER BY pedido_id ASC`);
       if (result) {
         res.send(result);
       }else {
@@ -286,7 +286,7 @@ app.get("/get-materiais", (req, res) => {
   const getMateriais = async () => {
     try {
       await db.connect();
-      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_material`);
+      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_material ORDER BY material_id ASC`);
       if (result) {
         res.send(result);
       }else {
@@ -353,7 +353,7 @@ app.get("/get-equipamentos", (req, res) => {
   const getPedidos = async () => {
     try {
       await db.connect();
-      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_equip`);
+      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_equip ORDER BY equip_id ASC`);
       if (result) {
         res.send(result);
       }else {
@@ -557,11 +557,12 @@ app.post("/register-mass-equipamentos", (req, res) => {
     try {
       await db.connect();
       for (i = 0; i < massProviders.length; i++) {
-        const categoria = massProviders[i][0];
-        const marca = massProviders[i][1];
-        const modelo = massProviders[i][2];
-        const preco = massProviders[i][3];
-        const result = await db.query(`INSERT INTO ${nome_empresa}.tb_equip (categoria, marca, modelo, preco) VALUES ($1, $2, $3, $4)`, [categoria, marca, modelo, preco]);
+        const fornecedor = massProviders[i][0]
+        const categoria = massProviders[i][1];
+        const marca = massProviders[i][2];
+        const modelo = massProviders[i][3];
+        const preco = massProviders[i][4];
+        const result = await db.query(`INSERT INTO ${nome_empresa}.tb_equip (fornecedor, categoria, marca, modelo, preco) VALUES ($1, $2, $3, $4, $5)`, [fornecedor, categoria, marca, modelo, preco]);
         if (i == massProviders.length - 1) {
           if (result) {
             res.send('registrado');
@@ -594,7 +595,7 @@ app.get("/get-fornecedores", (req, res) => {
   const getFornecedores = async () => {
     try {
       await db.connect();
-      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_fornecedor`)
+      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_fornecedor ORDER BY id_fornecedor ASC`)
       if (result) {
         res.send(result);
       }else {
@@ -762,7 +763,7 @@ app.get("/get-clientes", (req, res) => {
   const getClientes = async () => {
     try {
       await db.connect();
-      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_client`)
+      const result = await db.query(`SELECT * FROM ${nome_empresa}.tb_client ORDER BY client_id ASC`)
       if (result) {
         res.send(result);
       }else {

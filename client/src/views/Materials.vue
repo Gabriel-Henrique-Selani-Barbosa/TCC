@@ -66,12 +66,12 @@
                   </div>
                 </td>
                 <td>
-                  <input
+                  <v-select
                     v-if="editEquipamento === equipamento.material_id"
-                    type="text"
-                    v-model="equipamentoCategoria"
-                    :placeholder="equipamento.fornecedor"
-                  />
+                      :options="fornecedores"
+                      label="nome"
+                      v-model="equipamentoFornecedor"
+                  ></v-select>
                   <p v-else class="text-xs font-weight-bold mb-0">{{ equipamento.fornecedor }}</p>
                 </td>
                 <td class="align-middle text-center text-sm">
@@ -120,7 +120,12 @@
                     class="text-secondary font-weight-bold text-xs"
                     data-toggle="tooltip"
                     data-original-title="Edit user"
-                    @click="handleeditEquipamento(equipamento.material_id)"
+                    @click="handleeditEquipamento(equipamento.material_id)
+                            equipamentoFornecedor = equipamento.fornecedor;
+                            equipamentoMarca = equipamento.categoria;
+                            equipamentoModelo = equipamento.nome;
+                            equipamentoPreco = equipamento.preco;
+                    "
                     >Edit</a>
                 </td>
               </tr>
@@ -202,6 +207,7 @@
         materialPreco: '',
         addEquipScreen: false,
         editEquipamento: '',
+        equipamentoFornecedor: '',
         equipamentoModelo: '',
         equipamentoCategoria: '',
         equipamentoMarca: '',
@@ -209,7 +215,7 @@
         categoryNameSearchString: '',
         materialProvider: '',
         current: 1,
-        pageSize: 5,
+        pageSize: 10,
       };
     },
     computed: {
@@ -337,20 +343,20 @@
       },
       handleSaveEquipamento(providerid) {
         axios
-          .post("http://localhost:3001/update-equipamentos", {
+          .post("http://localhost:3001/update-materiais", {
             storeName: this.storeName,
             id: providerid,
-            categoria: this.equipamentoCategoria,
-            marca: this.equipamentoMarca,
-            modelo: this.equipamentoModelo,
+            fornecedor: this.equipamentoFornecedor.nome,
+            categoria: this.equipamentoMarca,
+            nome: this.equipamentoModelo,
             preco: this.equipamentoPreco,
           })
           .then(() => {
             this.equipamentoModelo = '';
             this.equipamentoMarca = '';
-            this.equipamentoCategoria = '';
             this.equipamentoPreco = '';
             this.editEquipamento = '';
+            this.equipamentoFornecedor = '';
             this.getTableList();
           })
           .catch((error) => {

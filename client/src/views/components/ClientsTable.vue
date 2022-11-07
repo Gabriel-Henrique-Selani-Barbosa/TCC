@@ -151,7 +151,14 @@
                   class="text-secondary font-weight-bold text-xs"
                   data-toggle="tooltip"
                   data-original-title="Edit user"
-                  @click="handleEditcliente(cliente.client_id)"
+                  @click="handleEditcliente(cliente.client_id)
+                          clienteCpfCnpj = cliente.cpf_cnpj;
+                          clienteNumero = cliente.num;
+                          clienteEndereco = cliente.endereco;
+                          clienteCidade = cliente.cidade;
+                          clienteEstado = cliente.estado;
+                          clienteName = cliente.nome;
+                  "
                   >Edit</a>
                 <a style="margin-left: 15px"
                   href="javascript:;"
@@ -259,7 +266,7 @@ export default {
       categoryNameSearchString: '',
       massClients: [],
       current: 1,
-      pageSize: 5,
+      pageSize: 10,
     };
   },
   mounted: function () {

@@ -71,20 +71,20 @@
                 </div>
               </td>
               <td>
-                <input
-                  v-if="editEquipamento === equipamento.equip_id"
-                  type="text"
-                  v-model="equipamentoCategoria"
-                  :placeholder="equipamento.categoria"
-                />
-                <p v-else class="text-xs font-weight-bold mb-0">{{ equipamento.categoria }}</p>
+                <v-select
+                v-if="editEquipamento === equipamento.equip_id"
+                  :options="fornecedores"
+                  label="nome"
+                  v-model="equipamentoFornecedor"
+              ></v-select>
+                <p v-else class="text-xs font-weight-bold mb-0">{{ equipamento.fornecedor }}</p>
               </td>
               <td>
                 <input
                   v-if="editEquipamento === equipamento.equip_id"
                   type="text"
-                  v-model="equipamentoFornecedor"
-                  :placeholder="equipamento.fornecedor"
+                  v-model="equipamentoCategoria"
+                  :placeholder="equipamento.categoria"
                 />
                 <p v-else class="text-xs font-weight-bold mb-0">{{ equipamento.categoria }}</p>
               </td>
@@ -134,7 +134,13 @@
                   class="text-secondary font-weight-bold text-xs"
                   data-toggle="tooltip"
                   data-original-title="Edit user"
-                  @click="handleeditEquipamento(equipamento.equip_id)"
+                  @click="handleeditEquipamento(equipamento.equip_id)
+                        equipamentoCategoria = equipamento.categoria;
+                         equipamentoFornecedor = equipamento.fornecedor;
+                         equipamentoMarca = equipamento.marca;
+                         equipamentoModelo = equipamento.modelo
+                         equipamentoPreco = equipamento.preco;
+                  "
                   >Edit</a>
               </td>
             </tr>
@@ -229,7 +235,7 @@ export default {
       equipamentoFornecedor: '',
       categoryNameSearchString: '',
       current: 1,
-      pageSize: 5,
+      pageSize: 10,
     };
   },
   computed: {

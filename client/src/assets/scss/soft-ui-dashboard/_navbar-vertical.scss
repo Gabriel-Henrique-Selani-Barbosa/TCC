@@ -175,7 +175,10 @@
   }
 }
 // Sidenav + Main content transition
-
+.main-content {
+  width: 100vw;
+  padding: 0 10px;
+}
 .main-content,
 .sidenav {
   transition: $transition-base;
@@ -261,7 +264,7 @@
 
     &:not(.rtl) {
       .sidenav {
-        transform: translateX(-($navbar-vertical-open-width + 1.5));
+        transform: translateX(-300px);
       }
     }
 

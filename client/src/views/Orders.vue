@@ -41,7 +41,7 @@
                 <th
                   class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
                 >
-                  Material(ais)
+                  Material
                 </th>
                 <th
                   class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
@@ -242,7 +242,7 @@
         equipamentoFornecedor: '',
         categoryNameSearchString: '',
         current: 1,
-        pageSize: 5,
+        pageSize: 10,
       };
     },
     computed: {

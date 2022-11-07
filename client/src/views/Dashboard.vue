@@ -1,55 +1,15 @@
 <template>
   <div class="py-4 container-fluid">
-    <div class="row my-4">
-      <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
-        <projects-card />
-      </div>
-      <div class="col-lg-4 col-md-6">
-        <timeline-list
-          class="h-100"
-          title="Orders overview"
-          description="<i class='fa fa-arrow-up text-success' aria-hidden='true'></i>
-        <span class='font-weight-bold'>24%</span> this month"
-        >
-          <timeline-item
-            color="success"
-            icon="bell-55"
-            title="$2400 Design changes"
-            date-time="22 DEC 7:20 PM"
-          />
-          <TimelineItem
-            color="danger"
-            icon="html5"
-            title="New order #1832412"
-            date-time="21 DEC 11 PM"
-          />
-          <TimelineItem
-            color="info"
-            icon="cart"
-            title="Server payments for April"
-            date-time="21 DEC 9:34 PM"
-          />
-          <TimelineItem
-            color="warning"
-            icon="credit-card"
-            title="New card added for order #4395133"
-            date-time="20 DEC 2:20 AM"
-          />
-          <TimelineItem
-            color="primary"
-            icon="key-25"
-            title="Unlock packages for development"
-            date-time="18 DEC 4:54 AM"
-          />
-          <TimelineItem
-            color="info"
-            icon="check-bold"
-            title="Notifications unread"
-            date-time="15 DEC"
-          />
-        </timeline-list>
-      </div>
-    </div>
+      <span style="text-align: center; display: flex;">
+        Colaboradores:<br>
+          Denis de Sousa Rocha – F0168E0<br>
+          Gabriel Henrique Selani Barbosa – N4698B9<br>
+          Jeferson Gustavo Figueira – D922FJ0<br>
+          Ruan Carlos Rocha Falcão – F097366<br>
+          Yago Alan Cordeiro da Silva – F0386D0<br>
+
+          Principal objetivo com o projeto: 
+          O principal objetivo é facilitar o trabalho realizado pelo colaborador, afim de simplificar seu dia-a-dia na empresa além de permitir a mesma de ter um controle melhor dos seus dados.</span>
   </div>
 </template>
 <script>

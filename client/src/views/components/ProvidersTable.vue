@@ -104,7 +104,11 @@
                   class="text-secondary font-weight-bold text-xs"
                   data-toggle="tooltip"
                   data-original-title="Edit user"
-                  @click="handleEditFornecedor(fornecedor.id_fornecedor)"
+                  @click="handleEditFornecedor(fornecedor.id_fornecedor)
+                          fornecedorNome = fornecedor.nome;
+                          fornecedorCpfCnpj = fornecedor.cpf_cnpj;
+                          fornecedorProduto = fornecedor.produto;
+                  "
                   >Edit</a>
               </td>
             </tr>
@@ -181,7 +185,7 @@ export default {
       fornecedorCpfCnpj: '',
       categoryNameSearchString: '',
       current: 1,
-      pageSize: 5,
+      pageSize: 10,
     };
   },
   computed: {
