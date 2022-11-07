@@ -10,9 +10,8 @@
         aria-hidden="true"
         id="iconSidenav"
       ></i>
-      <a class="m-0 navbar-brand" href="/">
+      <a class="m-0 navbar-brand" href="/dashboard" style="display: flex; justify-content: center; flex-direction: column;">
         <img :src="logo" class="navbar-brand-img h-100" alt="main_logo" />
-        <span class="ms-1 font-weight-bold">Página Inicial do TCC</span>
       </a>
     </div>
     <hr class="mt-0 horizontal dark" />
@@ -22,7 +21,7 @@
 </template>
 <script>
 import SidenavList from "./SidenavList.vue";
-import logo from "@/assets/img/logo-ct.png";
+import logo from "@/assets/img/unip-logo.png";
 import { mapState } from "vuex";
 
 export default {
